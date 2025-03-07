@@ -1,0 +1,6 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://reixxy2fymu3"]
+
+[ext_resource type="FontFile" uid="uid://cb3a1aglu7cw4" path="res://Envy Code R.ttf" id="1_g2pbu"]
+
+[resource]
+default_font = ExtResource("1_g2pbu")

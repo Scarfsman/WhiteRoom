@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3 uid="uid://c4yb07lkavede"]
+
+[ext_resource type="FontFile" uid="uid://ddcd3rbuxdawo" path="res://FiraCode-Light.otf" id="1_sje3j"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n77bk"]
+draw_center = false
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+
+[node name="TableCell" type="Label"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("1_sje3j")
+theme_override_styles/normal = SubResource("StyleBoxFlat_n77bk")
+text = "Cell
+"
+horizontal_alignment = 1
+vertical_alignment = 1

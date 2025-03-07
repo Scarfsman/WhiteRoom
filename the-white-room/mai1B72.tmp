@@ -1,0 +1,151 @@
+[gd_scene load_steps=4 format=3 uid="uid://8c7yg47fmh45"]
+
+[ext_resource type="Script" path="res://main.gd" id="1_n536m"]
+[ext_resource type="Theme" uid="uid://reixxy2fymu3" path="res://new_theme.tres" id="2_epkic"]
+[ext_resource type="PackedScene" uid="uid://c6gb8xtioqkkx" path="res://tscn/table.tscn" id="2_uu8r5"]
+
+[node name="Main" type="Node"]
+script = ExtResource("1_n536m")
+
+[node name="FileDialogRed" type="FileDialog" parent="."]
+title = "Open a File"
+initial_position = 1
+size = Vector2i(600, 400)
+ok_button_text = "Open"
+dialog_hide_on_ok = true
+file_mode = 0
+access = 2
+
+[node name="FileDialogBlue" type="FileDialog" parent="."]
+auto_translate_mode = 1
+title = "Open a File"
+initial_position = 1
+size = Vector2i(600, 400)
+ok_button_text = "Open"
+dialog_hide_on_ok = true
+file_mode = 0
+access = 2
+
+[node name="TabContainer" type="TabContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+current_tab = 3
+
+[node name="Splash Screen" type="TabBar" parent="TabContainer"]
+visible = false
+layout_mode = 2
+theme = ExtResource("2_epkic")
+metadata/_tab_index = 0
+
+[node name="RedTeam" type="TabBar" parent="TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="Background" type="Panel" parent="TabContainer/RedTeam"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -550.0
+offset_top = -238.5
+offset_right = 550.0
+offset_bottom = 281.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ModelData" parent="TabContainer/RedTeam/Background" instance=ExtResource("2_uu8r5")]
+layout_mode = 1
+offset_bottom = -275.0
+
+[node name="WeaponData" parent="TabContainer/RedTeam/Background" instance=ExtResource("2_uu8r5")]
+layout_mode = 1
+offset_top = 270.0
+offset_bottom = -5.0
+
+[node name="LoadRedTeam" type="Button" parent="TabContainer/RedTeam"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 241.0
+offset_top = -286.5
+offset_right = 393.0
+offset_bottom = -255.5
+grow_vertical = 2
+
+[node name="OptionButtonRed" type="OptionButton" parent="TabContainer/RedTeam"]
+layout_mode = 0
+offset_left = 439.69
+offset_top = 22.975
+offset_right = 727.69
+offset_bottom = 53.975
+
+[node name="BlueTeam" type="TabBar" parent="TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
+
+[node name="Background" type="Panel" parent="TabContainer/BlueTeam"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -550.0
+offset_top = -238.5
+offset_right = 550.0
+offset_bottom = 281.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ModelData" parent="TabContainer/BlueTeam/Background" instance=ExtResource("2_uu8r5")]
+layout_mode = 1
+offset_bottom = -250.0
+
+[node name="WeaponData" parent="TabContainer/BlueTeam/Background" instance=ExtResource("2_uu8r5")]
+layout_mode = 1
+offset_top = 250.0
+
+[node name="LoadBlueTeam" type="Button" parent="TabContainer/BlueTeam"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 241.0
+offset_top = -286.5
+offset_right = 393.0
+offset_bottom = -255.5
+grow_vertical = 2
+
+[node name="OptionButtonBlue" type="OptionButton" parent="TabContainer/BlueTeam"]
+layout_mode = 0
+offset_left = 439.69
+offset_top = 22.975
+offset_right = 727.69
+offset_bottom = 53.975
+
+[node name="Monte Calro" type="TabBar" parent="TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 3
+
+[connection signal="file_selected" from="FileDialogRed" to="." method="_on_file_dialog_red_file_selected"]
+[connection signal="file_selected" from="FileDialogRed" to="." method="_on_file_dialog_file_selected"]
+[connection signal="file_selected" from="FileDialogBlue" to="." method="_on_file_dialog_blue_file_selected"]
+[connection signal="file_selected" from="FileDialogBlue" to="." method="_on_file_dialog_file_selected"]
+[connection signal="pressed" from="TabContainer/RedTeam/LoadRedTeam" to="." method="_on_load_red_team_pressed"]
+[connection signal="item_selected" from="TabContainer/RedTeam/OptionButtonRed" to="." method="_on_option_button_red_item_selected"]
+[connection signal="pressed" from="TabContainer/BlueTeam/LoadBlueTeam" to="." method="_on_load_blue_team_pressed"]
+[connection signal="item_selected" from="TabContainer/BlueTeam/OptionButtonBlue" to="." method="_on_option_button_blue_item_selected"]
