@@ -302,7 +302,9 @@ func simulation(attackerdf: DataFrame, defenderdf: DataFrame, n = 1500, debug = 
         for model in range(defenderdf.GetColumns('Count')[row]):
             defenderModels.append(int(defenderdf.GetColumns('W')[row]))
     
-    print(damages)
+    if debug:
+        print(damages)
+        print(defenderModels)
     
     #calculate the number of slain models
     if len(defenderModels) > 1:
@@ -313,16 +315,20 @@ func simulation(attackerdf: DataFrame, defenderdf: DataFrame, n = 1500, debug = 
             while destroyedModels < len(defenderModels):
                 for weapon in range(len(damages)):
                     var dam = float(attackerdf.GetColumns('D')[weapon])
-                    print('Damage per shot')
-                    print(dam)
+                    if debug:
+                        print('Damage per shot')
+                        print(dam)
                     for shot in range(damages[weapon][trial]):
                         currDamage -= dam
+                        print(currDamage)
                         if currDamage <= 0:
                             destroyedModels += 1
                             #if the most recent shot kills the unit, 
                             #break out of this loop
                             if destroyedModels >= len(defenderModels):
                                 break
+                            currDamage = defenderModels[destroyedModels]
+                            print('nextM mdoel')
                     #if the unit is already dead, break here
                     if destroyedModels >= len(defenderModels):
                                 break
