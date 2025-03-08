@@ -7,6 +7,11 @@ var blueTeamWeapons = DataFrame.New([], [])
 var rng = RandomNumberGenerator.new()
 var expression = Expression.new()
 
+#variables for the monte carlo simulation
+var hits
+var wounds
+var damage = 0
+
 var unitCols = ['id',
                 'Datasheet',
                 'Name',
@@ -198,21 +203,53 @@ func getAttacks(attacks, count, abilities):
         totalAttacks = float(attacks) * float(count)
     return totalAttacks
     
-func getHits(HitOn, attacks, abilities):
+func getHits(HitOn, attacks, abilities, debug):
     var hits = 0
+    var crits = 0
+    
+    var lethalHits = 0
+    var SustainedHits = 0
+    
+    for ability in abilities:
+        if 'Lethal Hits' in ability:
+            lethalHits = 1
+            continue
+        if 'Sustained' in ability:
+            ability = ability.replace('Sustained Hits', '')
+            SustainedHits = float(ability)
+    
     if HitOn > 0:
         for shot in range(attacks):
             hits += int(rng.randi_range(1, 6) >= HitOn)
+        # if the weapon has abilities that matter for crits, calculate
+        if (lethalHits > 0) or (SustainedHits > 0):
+            for hit in range(hits):
+                crits += int(rng.randi_range(1, 6) >= 6)
+        hits = attacks - crits * lethalHits
+        hits += crits * SustainedHits
+        wounds += crits * lethalHits
     else:
+        #weapon auto hits
         hits = attacks
+  
+    if debug:
+        print('Abilities')
+        print('Lethal Hits')
+        print(lethalHits)
+        print('Sustained Hits')
+        print(SustainedHits)
+        print('Hits')
+        print(hits)
+        print('crits')
+        print(crits)
         
     return hits
     
 func getWounds(WoundOn, Hits):
-    var wounds = 0
+    var temp = 0
     for roll in Hits:
-        wounds += int(rng.randi_range(1, 6) >= WoundOn)   
-    return wounds
+        temp += int(rng.randi_range(1, 6) >= WoundOn)   
+    return temp
     
 func GetWoundOn(S, T):
     var WoundOn = S/T
@@ -230,7 +267,7 @@ func GetWoundOn(S, T):
     print(WoundOn)
     return WoundOn
     
-func simulation(attackerdf: DataFrame, defenderdf: DataFrame, n = 1500, debug = false):
+func simulation(attackerdf: DataFrame, defenderdf: DataFrame, n = 1, debug = true):
     print('----------------------------------------')
     print('Starting Simulation')
     var damages = []
@@ -263,27 +300,34 @@ func simulation(attackerdf: DataFrame, defenderdf: DataFrame, n = 1500, debug = 
         if debug:
             print('calculating svae')
             print(save)
-        
-        var hits
-        var wounds
-        var damage = 0
+    
+        damage = 0
         
         if save > 6:
-            for i in range(n):   
+            for i in range(n): 
+                hits = 0
+                wounds = 0  
                 damage = 0
                 var totalAttacks = getAttacks(attacks, count, abilities)
-                hits = getHits(HitOn, totalAttacks, abilities)
+                hits = getHits(HitOn, totalAttacks, abilities, debug)
+                if debug:
+                    print('Total Hits')
+                    print(hits)
+                    print(wounds)
                 wounds = getWounds(WoundOn, hits)
                 Dams.append(wounds)
                 
         else:
             for i in range(n):
+                hits = 0
+                wounds = 0  
                 damage = 0
                 var totalAttacks = getAttacks(attacks, count, abilities)
-                hits = getHits(HitOn, totalAttacks, abilities)
+                hits = getHits(HitOn, totalAttacks, abilities, debug)
                 if debug:
                     print('Total Hits')
                     print(hits)
+                    print(wounds)
                 wounds = getWounds(WoundOn, hits)
                 if debug:
                     print('TotalWounds')
