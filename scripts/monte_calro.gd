@@ -26,7 +26,7 @@ func displayGraph():
             for i in range(len($Graph/Graph.data.values())):
                 currTrials += $Graph/Graph.data.values()[i]
                 if currTrials/totalTrials > 0.5:
-                    var newRow = '{n} model(s) slain on average'
+                    var newRow = '{n} model(s) slain on average \n'
                     context += newRow.format({'n': $Graph/Graph.data.keys()[i]})
                     break     
             #get the percent chance to wipe the defending unit   

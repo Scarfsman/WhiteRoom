@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://8c7yg47fmh45"]
+[gd_scene load_steps=9 format=3 uid="uid://8c7yg47fmh45"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_n536m"]
 [ext_resource type="Theme" uid="uid://reixxy2fymu3" path="res://new_theme.tres" id="2_epkic"]
@@ -6,6 +6,8 @@
 [ext_resource type="FontFile" uid="uid://cb3a1aglu7cw4" path="res://Fonts/Envy Code R.ttf" id="3_6lbhf"]
 [ext_resource type="Script" path="res://scripts/monte_calro.gd" id="5_stiw4"]
 [ext_resource type="Script" path="res://scripts/graph.gd" id="5_ymnst"]
+[ext_resource type="Texture2D" uid="uid://c0tn6os2woo7n" path="res://icon.svg" id="7_ogo76"]
+[ext_resource type="Script" path="res://object.gd" id="8_cnuny"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_n536m")
@@ -27,7 +29,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("2_epkic")
-current_tab = 2
+current_tab = 3
 metadata/_edit_use_anchors_ = true
 
 [node name="Splash Screen" type="TabBar" parent="TabContainer"]
@@ -81,6 +83,7 @@ theme = ExtResource("2_epkic")
 theme_override_fonts/font = ExtResource("3_6lbhf")
 
 [node name="Monte Carlo" type="TabBar" parent="TabContainer"]
+visible = false
 layout_mode = 2
 script = ExtResource("5_stiw4")
 metadata/_tab_index = 2
@@ -189,6 +192,34 @@ offset_bottom = 208.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="White Room" type="TabBar" parent="TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 3
+
+[node name="Panel" type="Panel" parent="TabContainer/White Room"]
+layout_mode = 0
+offset_left = 575.0
+offset_top = 110.0
+offset_right = 1797.0
+offset_bottom = 938.0
+
+[node name="Object" type="Sprite2D" parent="TabContainer/White Room/Panel"]
+position = Vector2(182, 146)
+texture = ExtResource("7_ogo76")
+script = ExtResource("8_cnuny")
+
+[node name="Button" type="Button" parent="TabContainer/White Room/Panel/Object"]
+self_modulate = Color(1, 1, 1, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -64.0
+offset_top = -64.0
+offset_right = -64.0
+offset_bottom = -64.0
+grow_horizontal = 2
+grow_vertical = 2
+
 [connection signal="file_selected" from="FileDialogRed" to="." method="_on_file_dialog_file_selected"]
 [connection signal="file_selected" from="FileDialogRed" to="." method="_on_file_dialog_red_file_selected"]
 [connection signal="pressed" from="TabContainer/LoadData/Load" to="." method="_on_load_pressed"]
@@ -196,3 +227,5 @@ grow_vertical = 2
 [connection signal="item_selected" from="TabContainer/Monte Carlo/AttackerSelection" to="TabContainer/Monte Carlo" method="_on_subject_selection_item_selected"]
 [connection signal="item_selected" from="TabContainer/Monte Carlo/AttackerWeaponType" to="TabContainer/Monte Carlo" method="_on_subject_weapon_type_item_selected"]
 [connection signal="item_selected" from="TabContainer/Monte Carlo/DefenderSelection" to="TabContainer/Monte Carlo" method="_on_target_selection_item_selected"]
+[connection signal="button_down" from="TabContainer/White Room/Panel/Object/Button" to="TabContainer/White Room/Panel/Object" method="_on_button_button_down"]
+[connection signal="button_up" from="TabContainer/White Room/Panel/Object/Button" to="TabContainer/White Room/Panel/Object" method="_on_button_button_up"]
