@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://c4yb07lkavede"]
 
-[ext_resource type="FontFile" uid="uid://ddcd3rbuxdawo" path="res://FiraCode-Light.otf" id="1_sje3j"]
+[ext_resource type="FontFile" uid="uid://ddcd3rbuxdawo" path="res://Fonts/FiraCode-Light.otf" id="1_sje3j"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n77bk"]
 draw_center = false

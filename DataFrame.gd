@@ -18,7 +18,7 @@ static func New(d: Array, c = false) -> DataFrame:
 func GetColumns(cols):
     #case where passed argument is a string, in which case, get single column
     if cols is String:
-        #assert(cols in columns)
+        assert(cols in columns)
         var x1 = columns.find(cols)
         var result = []
         for row in data:
@@ -57,7 +57,12 @@ func GetUnique():
             result.append(row)
     return DataFrame.New(result, columns)
 
-func filter(colName: String, arg, exclude = false):
+func Append(newDataFrame: DataFrame) -> void:
+    assert(newDataFrame.columns == columns)
+    for row in newDataFrame.data:
+        data.append(row)
+
+func filter(colName: String, arg, exclude = false) -> DataFrame:
     var filterData = []
     var filterColumn = GetColumns(colName)
     for i in len(filterColumn):
