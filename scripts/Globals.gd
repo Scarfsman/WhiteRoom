@@ -44,6 +44,7 @@ var attackerCols: Array = ['Name',
                             'Abilities', 
                             'Count']
 
+#section for loading data
 func addModels(idnumber, datasheetName, modelName, profile, count):
     var chars = [idnumber, datasheetName, modelName]
     
@@ -189,6 +190,7 @@ func load_json_file(path: String):
     else:
         print("File Doesn't exist")
 
+#section for monte carlo simulation
 func getAttacks(attacks, count, abilities):
     var totalAttacks = 0
     if attacks is String:
@@ -426,3 +428,7 @@ func simulation(attackerdf: DataFrame, defenderdf: DataFrame, n = 1500, debug = 
     print('----------------------------------------')
     return sortedDict
     
+#functions for moving models
+
+func inchesToPixels(inches) -> float:
+    return inches * 20
