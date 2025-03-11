@@ -1,13 +1,15 @@
 [gd_scene load_steps=9 format=3 uid="uid://8c7yg47fmh45"]
 
-[ext_resource type="Script" path="res://scripts/main.gd" id="1_n536m"]
+[ext_resource type="Script" uid="uid://bqrabd3sa23gl" path="res://scripts/main.gd" id="1_n536m"]
 [ext_resource type="Theme" uid="uid://reixxy2fymu3" path="res://new_theme.tres" id="2_epkic"]
 [ext_resource type="PackedScene" uid="uid://c6gb8xtioqkkx" path="res://table.tscn" id="2_uu8r5"]
 [ext_resource type="FontFile" uid="uid://cb3a1aglu7cw4" path="res://Fonts/Envy Code R.ttf" id="3_6lbhf"]
-[ext_resource type="Script" path="res://scripts/monte_calro.gd" id="5_stiw4"]
-[ext_resource type="Script" path="res://scripts/graph.gd" id="5_ymnst"]
-[ext_resource type="Script" path="res://white_room.gd" id="7_id5n1"]
-[ext_resource type="PackedScene" uid="uid://qt6grn08pcky" path="res://unit.tscn" id="8_vxhvu"]
+[ext_resource type="Script" uid="uid://bfccuywk1vkoa" path="res://scripts/monte_calro.gd" id="5_stiw4"]
+[ext_resource type="Script" uid="uid://c23iht84gg2be" path="res://scripts/graph.gd" id="5_ymnst"]
+[ext_resource type="Script" uid="uid://dnu0hepq3t45i" path="res://white_room.gd" id="7_id5n1"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2ww3f"]
+size = Vector2(19.8807, 18.1772)
 
 [node name="Main" type="Node"]
 script = ExtResource("1_n536m")
@@ -105,6 +107,7 @@ offset_bottom = 81.0
 selected = 0
 item_count = 2
 popup/item_0/text = "Melee"
+popup/item_0/id = 0
 popup/item_1/text = "Shooting"
 popup/item_1/id = 1
 metadata/_edit_use_anchors_ = true
@@ -134,6 +137,7 @@ offset_top = 545.0
 offset_right = 368.0
 offset_bottom = 580.0
 item_count = 1
+popup/item_0/id = 0
 metadata/_edit_use_anchors_ = true
 
 [node name="Target" type="Panel" parent="TabContainer/Monte Carlo"]
@@ -205,8 +209,6 @@ offset_top = 110.0
 offset_right = 1775.0
 offset_bottom = 990.0
 
-[node name="Unit" parent="TabContainer/White Room/Panel" instance=ExtResource("8_vxhvu")]
-
 [node name="Load" type="Button" parent="TabContainer/White Room"]
 layout_mode = 1
 anchors_preset = -1
@@ -215,6 +217,15 @@ offset_top = 340.0
 offset_right = 362.0
 offset_bottom = 371.0
 grow_vertical = 2
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="TabContainer/White Room"]
+position = Vector2(1200, 352)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TabContainer/White Room/CharacterBody2D"]
+position = Vector2(0.174927, 2.67502)
+scale = Vector2(2.935, 2.935)
+shape = SubResource("RectangleShape2D_2ww3f")
+debug_color = Color(0.737065, 0.223677, 1, 0.42)
 
 [connection signal="file_selected" from="FileDialogRed" to="." method="_on_file_dialog_red_file_selected"]
 [connection signal="file_selected" from="FileDialogRed" to="." method="_on_file_dialog_file_selected"]

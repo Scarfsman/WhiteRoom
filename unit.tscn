@@ -1,22 +1,45 @@
-[gd_scene load_steps=3 format=3 uid="uid://qt6grn08pcky"]
+[gd_scene load_steps=4 format=3 uid="uid://qt6grn08pcky"]
 
-[ext_resource type="Texture2D" uid="uid://c0tn6os2woo7n" path="res://icon.svg" id="1_mgtl1"]
-[ext_resource type="Script" path="res://object.gd" id="2_g7d53"]
+[ext_resource type="Texture2D" uid="uid://biyn5dp6qj87x" path="res://pngwing.com(2).png" id="1_lfqr2"]
+[ext_resource type="Script" uid="uid://b8qa4sn5gfhce" path="res://object.gd" id="2_g7d53"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_c52km"]
+radius = 50.0
 
 [node name="Object" type="Sprite2D"]
-texture = ExtResource("1_mgtl1")
+scale = Vector2(0.5, 0.5)
 script = ExtResource("2_g7d53")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_lfqr2")
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="Sprite2D"]
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite2D/CharacterBody2D"]
+shape = SubResource("CircleShape2D_c52km")
+one_way_collision_margin = 0.0
+debug_color = Color(0.991163, 0, 0.269152, 0.42)
 
 [node name="Button" type="Button" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -64.0
-offset_top = -64.0
-offset_right = -64.0
-offset_bottom = -64.0
+offset_left = -50.0
+offset_top = -50.0
+offset_right = 49.0
+offset_bottom = 49.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="Area" type="Polygon2D" parent="."]
+color = Color(0.364706, 0.337255, 0.556863, 0.337255)
+
+[node name="Rays" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
 [connection signal="button_down" from="Button" to="." method="_on_button_button_down"]
 [connection signal="button_up" from="Button" to="." method="_on_button_button_up"]
