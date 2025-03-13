@@ -1,8 +1,8 @@
 extends Control
 
-@onready var TableRow = preload("res://table_row.tscn")
-@onready var TableCell = preload("res://table_cell.tscn")
-@onready var TickBox = preload("res://check_box.tscn")
+@onready var TableRow = preload("res://Scenes/table_row.tscn")
+@onready var TableCell = preload("res://Scenes/table_cell.tscn")
+@onready var TickBox = preload("res://Scenes/check_box.tscn")
 
 @export var data: DataFrame
 

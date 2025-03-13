@@ -432,3 +432,6 @@ func simulation(attackerdf: DataFrame, defenderdf: DataFrame, n = 1500, debug = 
 
 func inchesToPixels(inches) -> float:
     return inches * 20
+
+func pixelsToInches(pixels) -> float:
+    return pixels / 20

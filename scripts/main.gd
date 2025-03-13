@@ -53,6 +53,7 @@ func _on_file_dialog_red_file_selected(path: String) -> void:
     $TabContainer/LoadData/OptionButton.clear()
     $"TabContainer/Monte Carlo/AttackerSelection".clear()
     $"TabContainer/Monte Carlo/DefenderSelection".clear()
+    $"TabContainer/White Room/UnitSelection".clear()
     
     print(globals.Units.GetColumns('id'))
     
@@ -63,6 +64,7 @@ func _on_file_dialog_red_file_selected(path: String) -> void:
             $TabContainer/LoadData/OptionButton.add_item(unitString, unit[0])
             $"TabContainer/Monte Carlo/AttackerSelection".add_item(unitString, unit[0])
             $"TabContainer/Monte Carlo/DefenderSelection".add_item(unitString, unit[0])
+            $"TabContainer/White Room/UnitSelection".add_item(unitString, unit[0])
             list.append(unitString)
     display_data(1)
     monte_carlo.displayAttacker(1)

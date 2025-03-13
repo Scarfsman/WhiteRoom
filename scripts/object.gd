@@ -10,7 +10,10 @@ var rightBound: float
 var upperBound: float
 var lowerBound: float
 var FOV_incrament = 2 *  PI / 60
-var maxDist: float =  globals.inchesToPixels(14)
+var maxDist: float
+var travelDist
+var M: float = 14
+var neighbours = []
 
 var startPos: Vector2 = Vector2(0, 0)
 var temp1: Vector2
@@ -19,6 +22,7 @@ var temp2: Vector2
 @onready var space_state = get_world_2d().direct_space_state
 
 func _ready():
+    maxDist = globals.inchesToPixels(M)
     offsetParent = get_parent().global_position
     var boundries = get_parent().get_size()
     leftBound = offsetParent[0]
@@ -32,6 +36,7 @@ func _ready():
         newRay.visible = false
         $Rays.add_child(newRay)
         angle += FOV_incrament
+    set_start_position()
 
 func get_FOV_circle(from: Vector2, radius):
     var angle = FOV_incrament
@@ -41,26 +46,9 @@ func get_FOV_circle(from: Vector2, radius):
         ray.target_position =  ray.target_position.normalized() * radius
         if ray.is_colliding():
             print
-            points.append((ray.get_collision_point() - ray.global_position)/scale)
+            points.append((ray.get_collision_point() - ray.global_position))
         else:
             points.append(ray.target_position)
-    '''
-    while angle < 2 * PI:
-        var offset = Vector2(radius, 0).rotated(angle)
-        var to = from + offset
-        var params = PhysicsRayQueryParameters2D.create(from, to)
-        #params.exclude = []
-        #params.collision_mask = 1
-        var result = space_state.intersect_ray(params)
-        temp1 = from
-        temp2 = to
-        if result:
-            print('collided')
-            points.append(result.position)
-        else:
-            points.append(to)
-        angle += FOV_incrament
-    '''
 
     return points
         
@@ -72,8 +60,9 @@ func _draw() -> void:
     draw_line(temp1, temp2, Color.WHITE)
       
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(delta: float) -> void:   
     if dragging:
+        var prevPos = position
         var targetPos = get_global_mouse_position() - offsetPos
         #make sure the object isn't being moved outside the bounds of the 
         #gameboard
@@ -93,18 +82,17 @@ func _process(delta: float) -> void:
             var xNew = startPos[0] + (maxDist * cos(angle))
             var yNew = startPos[1] + (maxDist * sin(angle))
             targetPos = Vector2(xNew, yNew)
+            
         position = targetPos - offsetParent
-        draw_target_area(Vector2(0, 0), maxDist - min(travelDist, maxDist) + 50)
-        queue_redraw()
+        draw_target_area(Vector2(0, 0), maxDist - min(travelDist, maxDist) + 50)      
     
 func _on_button_button_down() -> void:
     dragging = true
-    startPos = global_position 
     offsetPos = get_global_mouse_position() - global_position
+    travelDist = maxDist
 
 func _on_button_button_up() -> void:
     dragging = false
-    startPos = Vector2(0, 0) 
     clear_target_area()
 
 func set_target_area(points: PackedVector2Array) -> void:
@@ -112,3 +100,20 @@ func set_target_area(points: PackedVector2Array) -> void:
     
 func clear_target_area() -> void:
     set_target_area(PackedVector2Array())
+
+
+func _input(ev):
+    if Input.is_key_pressed(KEY_SPACE):
+        set_start_position()
+    if Input.is_key_pressed(KEY_R):
+        print('reseting')
+        reset_sprite()
+
+func set_start_position() -> void:
+    startPos = global_position
+    maxDist = globals.inchesToPixels(M) 
+    
+func reset_sprite() -> void:
+    position = startPos - offsetParent
+    maxDist = globals.inchesToPixels(M)
+    

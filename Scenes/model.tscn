@@ -1,17 +1,16 @@
 [gd_scene load_steps=4 format=3 uid="uid://qt6grn08pcky"]
 
-[ext_resource type="Texture2D" uid="uid://biyn5dp6qj87x" path="res://pngwing.com(2).png" id="1_lfqr2"]
-[ext_resource type="Script" uid="uid://b8qa4sn5gfhce" path="res://object.gd" id="2_g7d53"]
+[ext_resource type="Script" uid="uid://b8qa4sn5gfhce" path="res://scripts/object.gd" id="1_682kq"]
+[ext_resource type="Texture2D" uid="uid://km3tc1sjuafp" path="res://pngwing.com(2).png" id="2_h01ia"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_c52km"]
 radius = 50.0
 
 [node name="Object" type="Sprite2D"]
-scale = Vector2(0.5, 0.5)
-script = ExtResource("2_g7d53")
+script = ExtResource("1_682kq")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("1_lfqr2")
+texture = ExtResource("2_h01ia")
 
 [node name="CharacterBody2D" type="CharacterBody2D" parent="Sprite2D"]
 collision_mask = 3
@@ -21,14 +20,16 @@ shape = SubResource("CircleShape2D_c52km")
 one_way_collision_margin = 0.0
 debug_color = Color(0.991163, 0, 0.269152, 0.42)
 
-[node name="Button" type="Button" parent="."]
+[node name="Button" type="Button" parent="Sprite2D"]
+modulate = Color(1, 1, 1, 0)
+self_modulate = Color(1, 1, 1, 0)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -50.0
 offset_top = -50.0
-offset_right = 49.0
-offset_bottom = 49.0
+offset_right = -50.0
+offset_bottom = -50.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -36,10 +37,11 @@ grow_vertical = 2
 color = Color(0.364706, 0.337255, 0.556863, 0.337255)
 
 [node name="Rays" type="Control" parent="."]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[connection signal="button_down" from="Button" to="." method="_on_button_button_down"]
-[connection signal="button_up" from="Button" to="." method="_on_button_button_up"]
+[connection signal="button_down" from="Sprite2D/Button" to="." method="_on_button_button_down"]
+[connection signal="button_up" from="Sprite2D/Button" to="." method="_on_button_button_up"]

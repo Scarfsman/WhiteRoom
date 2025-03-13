@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://c4yb07lkavede"]
 
-[ext_resource type="FontFile" uid="uid://ddcd3rbuxdawo" path="res://Fonts/FiraCode-Light.otf" id="1_sje3j"]
+[ext_resource type="FontFile" uid="uid://ddcd3rbuxdawo" path="res://Fonts/FiraCode-Light.otf" id="1_rplyb"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n77bk"]
 draw_center = false
@@ -17,7 +17,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_fonts/font = ExtResource("1_sje3j")
+theme_override_fonts/font = ExtResource("1_rplyb")
 theme_override_styles/normal = SubResource("StyleBoxFlat_n77bk")
 text = "Cell
 "
