@@ -10,6 +10,22 @@ func _ready() -> void:
     file_access_web.loaded.connect(_on_file_loaded)
     file_access_web.load_started.connect(_on_file_load_started)
     file_access_web.progress.connect(_on_progress)
+    
+    $TabContainer/LoadData/OptionButton.clear()
+    $"TabContainer/Monte Carlo/AttackerSelection".clear()
+    $"TabContainer/Monte Carlo/DefenderSelection".clear()
+    
+    var list = []
+    for unit in globals.Units.data:
+        var unitString = str(unit[0]) + ' - ' + unit[1]
+        if unitString not in list:
+            $TabContainer/LoadData/OptionButton.add_item(unitString, unit[0])
+            $"TabContainer/Monte Carlo/AttackerSelection".add_item(unitString, unit[0])
+            $"TabContainer/Monte Carlo/DefenderSelection".add_item(unitString, unit[0])
+            list.append(unitString)
+    display_data(1)
+    monte_carlo.displayAttacker(1)
+    monte_carlo.displayDefender(1)
 
 #display data
 func display_data(id = 0) -> void:
@@ -18,6 +34,7 @@ func display_data(id = 0) -> void:
     var path
 
     if id == 0:
+        #if id = 0, display everything
         unitData = globals.Units
         weaponData = globals.Weapons
     else:
@@ -30,7 +47,7 @@ func display_data(id = 0) -> void:
     unitData = unitData.prettify()
     var unitTable = get_node(path + '/ModelData')
     unitTable.data = unitData
-    unitTable.Render()
+    unitTable.RenderText()
     
     weaponData = weaponData.prettify()
     var weapponTable = get_node(path + '/WeaponData')
@@ -44,6 +61,8 @@ func _on_load_pressed() -> void:
     #file_access_web.open()
 
 #Red Team File Uploaded
+#this function is left in for debugging without having to build the app 
+#to the web, leave here for now
 func _on_file_dialog_red_file_selected(path: String) -> void:
     rosterData = globals.load_json_file(path)
     rosterData = globals.json_to_dataframe(rosterData)
@@ -54,9 +73,7 @@ func _on_file_dialog_red_file_selected(path: String) -> void:
     $"TabContainer/Monte Carlo/AttackerSelection".clear()
     $"TabContainer/Monte Carlo/DefenderSelection".clear()
     $"TabContainer/White Room/UnitSelection".clear()
-    
-    print(globals.Units.GetColumns('id'))
-    
+
     var list = []
     for unit in globals.Units.data:
         var unitString = str(unit[0]) + ' - ' + unit[1]

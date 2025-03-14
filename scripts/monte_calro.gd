@@ -66,16 +66,19 @@ func displayAttacker(id):
     weaponData = weaponData.filter('Range', 'Melee', range)
     
     attackerData = weaponData
-    weaponData = weaponData.GetColumns(globals.attackerCols).prettify()
-    var attackerTable = $Subject/ModelData
-    attackerTable.data = weaponData
-    attackerTable.RenderCheck()
+    if attackerData.Size() >= 1:
+        weaponData = weaponData.GetColumns(globals.attackerCols).prettify()
+        var attackerTable = $Subject/ModelData
+        attackerTable.data = weaponData
+        attackerTable.RenderCheck()
     
 func displayDefender(id):
+    print(id)
     var unitData = globals.Units
     unitData = unitData.filter('id', id)
     
     defenderData = unitData
+    print(unitData)
     unitData = unitData.GetColumns(['Name', 'T', 'Sv', 'W', 'Count'])
     unitData = unitData.prettify()
     var defenderTable = $Target/ModelData

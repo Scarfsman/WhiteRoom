@@ -4,14 +4,18 @@ class_name DataFrame
 'https://www.youtube.com/@squadron_studio'
 
 @export var data: Array
+@export var index: Array
 @export var columns: PackedStringArray
 
-
-static func New(d: Array, c = false) -> DataFrame:
+static func New(d: Array, c = false, i = []) -> DataFrame:
     var df = DataFrame.new()
     df.data = d
     if c:
         df.columns = c
+    if i == []:
+        df.index = range(len(d))
+    else:
+        df.index = i
     return df
 
 # getters
@@ -61,17 +65,20 @@ func Append(newDataFrame: DataFrame) -> void:
     assert(newDataFrame.columns == columns)
     for row in newDataFrame.data:
         data.append(row)
+    index = range(len(data))
 
 func filter(colName: String, arg, exclude = false) -> DataFrame:
     var filterData = []
     var filterColumn = GetColumns(colName)
+    var newIndex = []
     for i in len(filterColumn):
         if (filterColumn[i] == arg) and (exclude == false):
             filterData.append(data[i])
+            newIndex.append(index[i])
         elif (filterColumn[i] != arg) and (exclude == true):
             filterData.append(data[i])
-            
-    return DataFrame.New(filterData, columns)
+            newIndex.append(index[i])
+    return DataFrame.New(filterData, columns, newIndex)
                         
 func Size():
     return len(data)
@@ -169,5 +176,5 @@ func prettify():
                 newData[row][column] += ' '
         for i in range(maxLength + 2 - len(newCols[column])):
              newCols[column] += ' '
-    return DataFrame.New(newData, newCols)
+    return DataFrame.New(newData, newCols, index)
         

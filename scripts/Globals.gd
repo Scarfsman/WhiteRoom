@@ -18,7 +18,8 @@ var unitCols = ['id',
                 'W',
                 'Ld',
                 'OC',
-                'Count']
+                'Count',
+                'Base Size']
 var weaponCols = ['id',
                   'Datasheet',
                   'Name',
@@ -30,8 +31,19 @@ var weaponCols = ['id',
                   'D',
                   'Abilities',
                   'Count']
-var Units = DataFrame.New([], unitCols)
-var Weapons = DataFrame.New([], weaponCols)
+
+var exampleUnits = [[1, 'Void Brothers', 'Void Brother', '6', 4, 3, 2, 7, 2, 4, 32],
+                    [1, 'Void Brothers', 'Void Brother-Sargent', '6', 4, 3, 2, 7, 2, 1, 32],
+                    [2, 'Astral Warriors', 'Warrior', 6, 3, 5, 1, 7, 2, 10, 25]]
+                
+var exampleWeapons = [[1, 'Void Brothers', 'Grenade Rifle', '24"', 2, '3+', 4, 1, 1, ["-"], 4],
+                      [1, 'Void Brothers', 'Plasma Mortar', '24"', 'D6', '3+', 6, 0, 1, ["-"], 1],
+                      [1, 'Void Brothers', 'Close Combat Weapon', 'Melee', '2', '3+', 4, 0, 1, ["-"], 1],
+                      [2, 'Astral Warriors', 'Slug Thrower', '24"', 2, '4+', 3, 0, 1, ["-"], 10],
+                      [2, 'Astral Warriors', 'Close Combat Weapon', 'Melee', 1, '4+', 3, 0, 1, ["-"], 10]]
+
+var Units = DataFrame.New(exampleUnits, unitCols)
+var Weapons = DataFrame.New(exampleWeapons, weaponCols)
 
 #column names for the dataframes used to show the data used for the monte
 #carlo simulation
@@ -50,8 +62,11 @@ func addModels(idnumber, datasheetName, modelName, profile, count):
     
     for characteristic in profile['characteristics']:
         chars.append(characteristic['$text'])
-        
+    
+    #get the number of models
     chars.append(count)
+    #add place holder value for the base size 
+    chars.append(25)
     return chars
     
 func addWeapons(idnumber, datasheetName, weaponName, profile, count):
@@ -213,7 +228,7 @@ func getAttacks(attacks, count, abilities):
     return totalAttacks
     
 func getHits(HitOn, attacks, abilities, debug):
-    var hits = 0
+    hits = 0
     var crits = 0
     
     var lethalHits = 0
@@ -291,7 +306,6 @@ func simulation(attackerdf: DataFrame, defenderdf: DataFrame, n = 1500, debug = 
             print('-----------------')
             print(attackerdf.GetColumns('Name')[weapon])
             print('-----------------')
-        var Torrent = false
         var abilities = attackerdf.GetColumns('Abilities')[weapon]
         var attacks = attackerdf.GetColumns('A')[weapon]
         var count =  float(attackerdf.GetColumns('Count')[weapon])
