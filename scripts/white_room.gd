@@ -54,6 +54,11 @@ var deployments = [PackedVector2Array([Vector2(10, 18),
                                        Vector2(50, 26)])]
 
 func moveFeature(feature: Array) -> PackedVector2Array:
+    '''
+    Moves the terraain feature to a given position then rotates it
+    around the iniital point. check the terrainFeatures dictionary to see
+    which point the inital one it
+    '''
     var points = terrainFeatures[feature[0]]
     var offset = feature[1]
     var theta = feature[2]
@@ -68,7 +73,19 @@ func moveFeature(feature: Array) -> PackedVector2Array:
         
         newPoints.append(Vector2(x2, y2))
     return newPoints
-    
+ 
+func mirrorFeature(points: PackedVector2Array):
+    #flips a feature about the cetre point to make spawning easier
+    var newPoints = PackedVector2Array()
+    for point in points:
+        var x1 = point[0]
+        var y1 = point[1]
+        var x2 = ((x1 - 1200) * cos(PI) - (y1 - 880) * sin(PI))
+        var y2 = ((x1 - 1200) * sin(PI) + (y1 - 880) * cos(PI))
+        
+        newPoints.append(Vector2(x2, y2))
+    return newPoints
+   
 func spawnTerrain(layout: Array) -> void:
     for feature in layout:
         var terrain = footprint.instantiate()
@@ -76,13 +93,20 @@ func spawnTerrain(layout: Array) -> void:
         terrain.polygon = moveFeature(feature)
         terrain.color = Color.REBECCA_PURPLE
         terrain.setCollider()
- 
+        #flip the terain and spawn
+        var mirrorTerrain = footprint.instantiate()
+        $ScrollContainer/Control/Panel/Terrain.add_child(mirrorTerrain)
+        mirrorTerrain.polygon = mirrorFeature(terrain.polygon)
+        mirrorTerrain.color = Color.REBECCA_PURPLE
+        mirrorTerrain.setCollider()
+
 #code for deployments
 func spawnDeployment(objectives: Array) -> void:
     for markerPos in objectives[0]:
         var newX = globals.inchesToPixels(markerPos[0])
         var newY = globals.inchesToPixels(markerPos[1])
         var marker = Polygon2D.new()
+        #the radius of an objective marker
         var radius = globals.inchesToPixels(3.7874015748)
         marker.polygon = generate_circle_polygon(radius, Vector2(newX, newY))
         marker.z_index = 2
@@ -101,9 +125,7 @@ func generate_circle_polygon(radius: float, position: Vector2) -> PackedVector2A
        
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-    var theta = asin(2/(20/2.54))
-    print('Theta')
-    print(cos(2* PI - theta) * (20/2.54))
+    pass
          
 func _process(delta: float) -> void:
     var thing = $PhaseSelect  

@@ -9,4 +9,4 @@ func HideModelPopup():
     %ModelPopup.hide()
 
 func _process(delta: float) -> void:
-    %ModelPopup.position = get_global_mouse_position() + Vector2(25, 0)
+    %ModelPopup.position = get_global_mouse_position() + Vector2(40, 0)
