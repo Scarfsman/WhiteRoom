@@ -449,3 +449,9 @@ func inchesToPixels(inches) -> float:
 
 func pixelsToInches(pixels) -> float:
     return pixels / 20
+
+func mmToPixels(mm) -> float:
+    return inchesToPixels(mmToInches(mm))
+
+func mmToInches(mm) -> float:
+    return mm/25.4

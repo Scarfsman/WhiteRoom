@@ -45,6 +45,8 @@ func RenderCheck():
             var cell = TableCell.instantiate()
             cell.text = str(value)
             columns.add_child(cell)
+        
+        var cell = TableCell.instantiate()
             
         var row_count = data.Size()
         for r in range(row_count):
@@ -52,7 +54,7 @@ func RenderCheck():
             $ScrollContainer/Rows.add_child(row)
             
             for value in data.GetRow(r):
-                var cell = TableCell.instantiate()
+                cell = TableCell.instantiate()
                 cell.text = str(value)
                 row.add_child(cell)
             var check = TickBox.instantiate()

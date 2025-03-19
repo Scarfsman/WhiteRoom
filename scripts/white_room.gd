@@ -2,17 +2,137 @@ extends TabBar
 
 @onready var unit = preload("res://Scenes/unit.tscn")
 @onready var model = preload("res://Scenes/model.tscn")
+@onready var footprint = preload("res://Scenes/TerrainFootprint.tscn")
 
+#variables for zooming
+var hovering: bool = false                             
+var currScale: float = 1
+
+#https://docs.google.com/document/d/1WV085gGnMPOF-zprcri-9HDW5BWBE34HGc9ndIGRJHM/edit?tab=t.0
+
+#TODO set up a dictionary containing the terain features from the UKTC terrain pack
+#write a script to span them in                
+
+var terrainFeatures = {'LargeL': PackedVector2Array([Vector2(0, 0),
+                                                     Vector2(0, 200),
+                                                     Vector2(200, 200),
+                                                     Vector2(200, 0)]),
+                        
+                        'MediumL': PackedVector2Array([Vector2(0, 0),
+                                                       Vector2(220, 0),
+                                                       Vector2(220, 170),
+                                                       Vector2(175, 170),
+                                                       Vector2(175, 45),
+                                                       Vector2(0, 45)]),
+                                                    
+                        'SmallLR': PackedVector2Array([Vector2(0, 0),
+                                                       Vector2(0, 100),
+                                                       Vector2(200, 100),
+                                                       Vector2(200, 0)]),
+                                                    
+                        'SmallLL': PackedVector2Array([Vector2(0, 0),
+                                                       Vector2(0, 100),
+                                                       Vector2(200, 100),
+                                                       Vector2(200, 0)]),
+                                                    
+                        'newRuins': PackedVector2Array([Vector2(0, 0),
+                                                        Vector2(0, 76.2),
+                                                        Vector2(228.6, 76.2),
+                                                        Vector2(228.6, 0)])}
+
+var layouts = [[['LargeL', [120, 667.684375062506], 6.02637165237177],
+                ['SmallLR', [420, 541.25984252], 0],
+                ['SmallLL', [656.220472441, 620], 1.5708],
+                ['MediumL', [820, 750], (2 * PI) - PI/5.2],
+                ['MediumL', [120, 553.228346457],  (2 * PI) - PI/2],
+                ['newRuins', [380, 280], 0.729728]]]
+
+var deployments = [PackedVector2Array([Vector2(10, 18),
+                                       Vector2(18, 38),
+                                       Vector2(30, 22),
+                                       Vector2(42, 6),
+                                       Vector2(50, 26)])]
+
+func moveFeature(feature: Array) -> PackedVector2Array:
+    print(feature[0])
+    var points = terrainFeatures[feature[0]]
+    var offset = feature[1]
+    var theta = feature[2]
+    var newPoints = PackedVector2Array()
+    
+    for point in points:
+        var x1 = globals.mmToPixels(point[0])
+        var y1 = globals.mmToPixels(point[1])
+        
+        var x2 = (x1 * cos(theta) - y1 * sin(theta)) + offset[0]
+        var y2 = (x1 * sin(theta) + y1 * cos(theta)) + offset[1]
+        
+        newPoints.append(Vector2(x2, y2))
+    return newPoints
+    
+func spawnTerrain(layout: Array) -> void:
+    for feature in layout:
+        var terrain = footprint.instantiate()
+        $ScrollContainer/Control/Panel/Terrain.add_child(terrain)
+        terrain.polygon = moveFeature(feature)
+        terrain.color = Color.REBECCA_PURPLE
+        terrain.setCollider()
+ 
+#code for deployments
+func spawnDeployment(objectives: Array) -> void:
+    for markerPos in objectives[0]:
+        print(markerPos)
+        var newX = globals.inchesToPixels(markerPos[0])
+        var newY = globals.inchesToPixels(markerPos[1])
+        var marker = Polygon2D.new()
+        var radius = globals.inchesToPixels(3.7874015748)
+        marker.polygon = generate_circle_polygon(radius, Vector2(newX, newY))
+        marker.z_index = 2
+        marker.color = Color(1, 0.921569, 0.803922, 0.4)
+        $ScrollContainer/Control/Panel/Terrain.add_child(marker)
+        
+func generate_circle_polygon(radius: float, position: Vector2) -> PackedVector2Array:
+    var angle_delta: float = (PI * 2) / 20
+    var vector: Vector2 = Vector2(radius, 0)
+    var polygon: PackedVector2Array
+
+    for _i in 20:
+        polygon.append(vector + position)
+        vector = vector.rotated(angle_delta)
+    return polygon
+       
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-    pass # Replace with function body.
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-
-var models = [40, 40, 40, 40]
+    var theta = asin(2/(20/2.54))
+    print('Theta')
+    print(cos(2* PI - theta) * (20/2.54))
+         
+func _process(delta: float) -> void:
+    var thing = $PhaseSelect  
+    print($PhaseSelect.selected)
+         
+func _input(event):
+ if event is InputEventMouseButton:
+        if event.button_index == MOUSE_BUTTON_WHEEL_UP and currScale <= 3:
+            currScale += 0.1
+            $ScrollContainer/Control/Panel.scale = Vector2(currScale, currScale)
+        if event.button_index == MOUSE_BUTTON_WHEEL_DOWN and currScale >1:
+            currScale -= 0.1
+            $ScrollContainer/Control/Panel.scale = Vector2(currScale, currScale)       
+        
+func _draw():
+    #draw a grid to make debugging terrain placement easier
+    var x  = 0 
+    while x <= 1200:
+        draw_line(Vector2(x, 0) + $ScrollContainer.position, Vector2(x, 880) + $ScrollContainer.position, Color.BLACK)
+        x += 20
+    var y = 0 
+    while y <= 880:
+        draw_line(Vector2(0, y) + $ScrollContainer.position, Vector2(1200, y) + $ScrollContainer.position, Color.BLACK)
+        y += 20
 
 func _on_load_pressed() -> void:
-    models = []
+    var models = []
     print($UnitSelection.get_selected_id())
     #filter the units data frame for the unit based on the drop down box
     var unitData = globals.Units.filter('id', $UnitSelection.get_selected_id())
@@ -22,6 +142,20 @@ func _on_load_pressed() -> void:
             models.append([row[1], row[2]])
     
     var newUnit = unit.instantiate()
+    #set the model to the correct phase
+    var index = $PhaseSelect.selected
+    if index == 0:
+        newUnit.movement = true
+        newUnit.shooting = false
+        newUnit.charge = false
+    elif index == 1:
+        newUnit.movement = false
+        newUnit.shooting = true
+        newUnit.charge = false
+    else:
+        newUnit.movement = false
+        newUnit.shooting = false
+        newUnit.charge = true
     for indx in range(len(models)):
         #create a new model class object and add it to the unit
         var newModel = model.instantiate()
@@ -36,6 +170,7 @@ func _on_load_pressed() -> void:
         radius = radius/25.4
         #convert inches to pixels
         radius = globals.inchesToPixels(radius)
+        newModel.radius = radius
         #get the scale factor for the sprite
         radius = radius/100
         var rowCount: int = 0
@@ -48,8 +183,35 @@ func _on_load_pressed() -> void:
         var y = 150 + (radius * 150 * rowCount)
         newModel.position = Vector2(x, y)
         
-    $Panel.add_child(newUnit)
+    $ScrollContainer/Control/Panel/Units.add_child(newUnit)
 
 func _on_clear_units_pressed() -> void:
-    for child in $Panel.get_children():
+    for child in $ScrollContainer/Control/Panel/Units.get_children():
         child.queue_free()
+
+func _on_spawn_terrain_pressed() -> void:
+    spawnTerrain(layouts[0])
+
+func _on_scroll_container_mouse_entered() -> void:
+    hovering = true
+
+func _on_scroll_container_mouse_exited() -> void:
+    hovering = false
+
+func _on_spawn_deployment_pressed() -> void:
+    spawnDeployment(deployments)
+
+func _on_phase_select_item_selected(index: int) -> void:
+    for unit in $ScrollContainer/Control/Panel/Units.get_children():
+        if index == 0:
+            unit.movement = true
+            unit.shooting = false
+            unit.charge = false
+        elif index == 1:
+            unit.movement = false
+            unit.shooting = true
+            unit.charge = false
+        else:
+            unit.movement = false
+            unit.shooting = false
+            unit.charge = true

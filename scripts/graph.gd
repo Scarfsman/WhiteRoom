@@ -26,12 +26,9 @@ func _draw():
         for i in data.values():
             totalTrials += i
         
-        var perc = 0
-        
         for i in range(len(xpos)): 
             var ratio =  float(data.values()[i]) / totalTrials
             var curDiff = diff * ratio
-            perc += curDiff
             draw_line(Vector2(xpos[i], dims[1]), Vector2(xpos[i], dims[1] - curDiff), 
                       Color.WHITE,
                       25) 

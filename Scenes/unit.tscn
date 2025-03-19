@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://dcsplmt6kbvbu" path="res://scripts/unit.gd" id="1_yjw0f"]
 
 [node name="Unit" type="Control"]
+z_index = 2
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

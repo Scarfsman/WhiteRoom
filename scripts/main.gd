@@ -14,6 +14,7 @@ func _ready() -> void:
     $TabContainer/LoadData/OptionButton.clear()
     $"TabContainer/Monte Carlo/AttackerSelection".clear()
     $"TabContainer/Monte Carlo/DefenderSelection".clear()
+    $"TabContainer/White Room/UnitSelection".clear()
     
     var list = []
     for unit in globals.Units.data:
@@ -22,6 +23,7 @@ func _ready() -> void:
             $TabContainer/LoadData/OptionButton.add_item(unitString, unit[0])
             $"TabContainer/Monte Carlo/AttackerSelection".add_item(unitString, unit[0])
             $"TabContainer/Monte Carlo/DefenderSelection".add_item(unitString, unit[0])
+            $"TabContainer/White Room/UnitSelection".add_item(unitString, unit[0])
             list.append(unitString)
     display_data(1)
     monte_carlo.displayAttacker(1)
@@ -91,7 +93,7 @@ func _on_file_dialog_red_file_selected(path: String) -> void:
 func _on_option_button_item_selected(index: int) -> void:
     display_data(index + 1)
     
-func _on_file_loaded(file_name: String, type: String, base64_data: String):
+func _on_file_loaded(_file_name: String, type: String, base64_data: String):
     var rawData : String = Marshalls.base64_to_utf8(base64_data)
     rosterData = JSON.parse_string(rawData)
     rosterData = globals.json_to_dataframe(rosterData)
@@ -120,4 +122,4 @@ func _on_file_load_started(file_name: String) -> void:
     
 #DONT DELETE
 func _on_progress(current_bytes: int, total_bytes: int) -> void:
-    var percentage: float = float(current_bytes) / float(total_bytes) * 100
+    var _percentage: float = float(current_bytes) / float(total_bytes) * 100

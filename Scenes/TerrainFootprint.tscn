@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://nwjs3lxbjqhs"]
+
+[ext_resource type="Script" uid="uid://c6xkgt3dimh8q" path="res://scripts/terrain_footprint.gd" id="1_70x33"]
+
+[node name="Polygon2D" type="Polygon2D"]
+z_index = 1
+script = ExtResource("1_70x33")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]

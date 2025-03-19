@@ -1,5 +1,9 @@
 extends Control
 
+var movement: bool = false
+var shooting: bool = false
+var charge: bool = false
+
 func checkNeighbours(model, visited: Array):
     for i in model.neighbours:
         if i not in visited:
@@ -42,7 +46,6 @@ func _draw() -> void:
             for i in allModels:
                 i.get_node('Sprite2D').modulate = Color(1,0,0)
                 
- 
 func _process(_float) -> void:
     queue_redraw()
         

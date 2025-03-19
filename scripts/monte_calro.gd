@@ -5,8 +5,7 @@ var defenderData = DataFrame.New([], [])
 
 func _ready():
     print($AttackerWeaponType.selected)
-        
-        
+             
 func displayGraph():
     if (len(defenderData.data) > 0) and (len(attackerData.data) > 0):
         $Graph/Graph.data = globals.simulation(attackerData, defenderData)
@@ -93,11 +92,10 @@ func _on_subject_selection_item_selected(index: int) -> void:
     displayAttacker(index + 1)
     displayGraph()
 
-func _on_subject_weapon_type_item_selected(index: int) -> void:
+func _on_subject_weapon_type_item_selected() -> void:
     if $AttackerSelection.selected != -1:
         displayAttacker($AttackerSelection.selected + 1)
         displayGraph()
 
-    
-        
+
     
