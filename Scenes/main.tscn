@@ -30,7 +30,7 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme = ExtResource("2_344ge")
-current_tab = 1
+current_tab = 3
 
 [node name="Splash Screen" type="TabBar" parent="TabContainer"]
 visible = false
@@ -39,6 +39,7 @@ theme_override_font_sizes/font_size = 1
 metadata/_tab_index = 0
 
 [node name="LoadData" type="TabBar" parent="TabContainer"]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
@@ -195,7 +196,6 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="White Room" type="TabBar" parent="TabContainer"]
-visible = false
 layout_mode = 2
 script = ExtResource("7_fdnlq")
 metadata/_tab_index = 3

@@ -17,6 +17,7 @@ config/features=PackedStringArray("4.4", "Forward Plus")
 [autoload]
 
 globals="*res://scripts/Globals.gd"
+Tooltip="*res://Scenes/tooltip.tscn"
 
 [display]
 

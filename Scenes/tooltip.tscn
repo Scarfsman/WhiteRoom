@@ -1,0 +1,38 @@
+[gd_scene load_steps=3 format=3 uid="uid://bprrokatky0ku"]
+
+[ext_resource type="Script" uid="uid://df4p764b24bf2" path="res://scripts/tooltip.gd" id="1_ogi1g"]
+[ext_resource type="Theme" uid="uid://reixxy2fymu3" path="res://new_theme.tres" id="2_617o6"]
+
+[node name="Tooltip" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ogi1g")
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="ModelPopup" type="PopupPanel" parent="UI"]
+unique_name_in_owner = true
+position = Vector2i(750, 550)
+size = Vector2i(113, 100)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/ModelPopup"]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 109.0
+offset_bottom = 96.0
+
+[node name="Label" type="Label" parent="UI/ModelPopup/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("2_617o6")
+theme_override_font_sizes/font_size = 20
+text = "TITLE"
+
+[node name="Label2" type="Label" parent="UI/ModelPopup/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("2_617o6")
+theme_override_font_sizes/font_size = 15
+text = "INFORmation"

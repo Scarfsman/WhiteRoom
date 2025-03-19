@@ -20,6 +20,9 @@ var startPos: Vector2 = Vector2(0, 0)
 var temp1: Vector2
 var temp2: Vector2
 
+#data for tooltips
+var data: Array
+
 @onready var space_state = get_world_2d().direct_space_state
 
 func _ready():
@@ -119,4 +122,11 @@ func movement():
             
         position = targetPos - offsetParent
         draw_target_area(maxDist - min(travelDist, maxDist))
-        
+
+
+
+func _on_button_mouse_entered() -> void:
+    Tooltip.ModelPopup(data)
+
+func _on_button_mouse_exited() -> void:
+    Tooltip.HideModelPopup()

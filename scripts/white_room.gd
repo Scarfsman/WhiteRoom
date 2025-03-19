@@ -54,7 +54,6 @@ var deployments = [PackedVector2Array([Vector2(10, 18),
                                        Vector2(50, 26)])]
 
 func moveFeature(feature: Array) -> PackedVector2Array:
-    print(feature[0])
     var points = terrainFeatures[feature[0]]
     var offset = feature[1]
     var theta = feature[2]
@@ -81,7 +80,6 @@ func spawnTerrain(layout: Array) -> void:
 #code for deployments
 func spawnDeployment(objectives: Array) -> void:
     for markerPos in objectives[0]:
-        print(markerPos)
         var newX = globals.inchesToPixels(markerPos[0])
         var newY = globals.inchesToPixels(markerPos[1])
         var marker = Polygon2D.new()
@@ -109,7 +107,6 @@ func _ready() -> void:
          
 func _process(delta: float) -> void:
     var thing = $PhaseSelect  
-    print($PhaseSelect.selected)
          
 func _input(event):
  if event is InputEventMouseButton:
@@ -133,14 +130,25 @@ func _draw():
 
 func _on_load_pressed() -> void:
     var models = []
-    print($UnitSelection.get_selected_id())
     #filter the units data frame for the unit based on the drop down box
     var unitData = globals.Units.filter('id', $UnitSelection.get_selected_id())
+    #get the model data for the tooltips
+    var modelData = globals.Units.filter('id', $UnitSelection.get_selected_id())
     unitData = unitData.GetColumns(['Count', 'Base Size', 'M']).data
-    for row in unitData:
-        for i in range(row[0]):
-            models.append([row[1], row[2]])
-    
+    #for each model type, get the information required to spawn the model,
+    #then save the information for the tool tips. 
+    for n in range(len(unitData)):
+        for i in range(unitData[n][0]):
+            var newModel = [unitData[n][1], unitData[n][2]]
+            var data = [modelData.data[n][1]]
+            var temp = ''
+            for col in range(2, 9):
+                var NewString = modelData.columns[col] + ': ' + str(modelData.data[n][col]) +'\n'
+                temp += NewString
+            data.append(temp)
+            newModel.append(data)
+            models.append(newModel)
+                
     var newUnit = unit.instantiate()
     #set the model to the correct phase
     var index = $PhaseSelect.selected
@@ -156,6 +164,7 @@ func _on_load_pressed() -> void:
         newUnit.movement = false
         newUnit.shooting = false
         newUnit.charge = true
+    #instantiate the models
     for indx in range(len(models)):
         #create a new model class object and add it to the unit
         var newModel = model.instantiate()
@@ -177,6 +186,9 @@ func _on_load_pressed() -> void:
         #set the sprite scale accordingly
         newModel.get_node('Sprite2D').scale = Vector2(radius, radius)
         rowCount = indx/5
+        #set the tooltip data for the model
+        print(models[indx][2])
+        newModel.data = models[indx][2] 
         
         #spawn the model
         var x = (indx*radius*150) + 150 - ((indx/5)*radius*150*5)
