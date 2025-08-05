@@ -79,6 +79,8 @@ func addWeapons(idnumber, datasheetName, weaponName, profile, count):
         chars[9] = chars[9].split(',')
     chars.append(count)
     return chars
+    
+    #testestest
 
 func json_to_dataframe(json):
     assert(json is Dictionary)

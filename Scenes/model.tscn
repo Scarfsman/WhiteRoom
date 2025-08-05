@@ -45,5 +45,6 @@ offset_bottom = 40.0
 
 [connection signal="button_down" from="Sprite2D/Button" to="." method="_on_button_button_down"]
 [connection signal="button_up" from="Sprite2D/Button" to="." method="_on_button_button_up"]
+[connection signal="focus_exited" from="Sprite2D/Button" to="." method="_on_button_focus_exited"]
 [connection signal="mouse_entered" from="Sprite2D/Button" to="." method="_on_button_mouse_entered"]
 [connection signal="mouse_exited" from="Sprite2D/Button" to="." method="_on_button_mouse_exited"]

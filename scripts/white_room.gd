@@ -13,33 +13,76 @@ var currScale: float = 1
 #TODO set up a dictionary containing the terain features from the UKTC terrain pack
 #write a script to span them in                
 
-var terrainFeatures = {'LargeL': PackedVector2Array([Vector2(0, 0),
+var terrainFeatures = {'LargeL': [PackedVector2Array([Vector2(0, 0),
                                                      Vector2(0, 200),
                                                      Vector2(200, 200),
-                                                     Vector2(200, 0)]),
+                                                     Vector2(200, 0)])],
                         
-                        'MediumL': PackedVector2Array([Vector2(0, 0),
+                        'MediumL': [PackedVector2Array([Vector2(0, 0),
                                                        Vector2(220, 0),
                                                        Vector2(220, 170),
                                                        Vector2(175, 170),
                                                        Vector2(175, 45),
-                                                       Vector2(0, 45)]),
+                                                       Vector2(0, 45)])],
                                                     
-                        'SmallLR': PackedVector2Array([Vector2(0, 0),
+                        'SmallLR': [PackedVector2Array([Vector2(0, 0),
                                                        Vector2(0, 100),
                                                        Vector2(200, 100),
-                                                       Vector2(200, 0)]),
+                                                       Vector2(200, 0)])],
                                                     
-                        'SmallLL': PackedVector2Array([Vector2(0, 0),
+                        'SmallLL': [PackedVector2Array([Vector2(0, 0),
                                                        Vector2(0, 100),
                                                        Vector2(200, 100),
-                                                       Vector2(200, 0)]),
+                                                       Vector2(200, 0)])],
                                                     
-                        'newRuins': PackedVector2Array([Vector2(0, 0),
+                        'newRuins': [PackedVector2Array([Vector2(0, 0),
                                                         Vector2(0, 76.2),
                                                         Vector2(228.6, 76.2),
-                                                        Vector2(228.6, 0)])}
+                                                        Vector2(228.6, 0)])]}
 
+var wallsFeatures = {'LargeL': [PackedVector2Array([Vector2(0, 0),
+                                                   Vector2(200, 0),
+                                                   Vector2(200, 200),
+                                                   Vector2(195, 200),
+                                                   Vector2(195, 5),
+                                                   Vector2(0, 5)])],
+                        
+                    'MediumL': [PackedVector2Array([Vector2(0, 18.5),
+                                                    Vector2(220, 18.5),
+                                                    Vector2(220, 21.5),
+                                                    Vector2(0, 21.5)]),
+                                PackedVector2Array([Vector2(198.5, 0),
+                                                    Vector2(198.5, 170),
+                                                    Vector2(195.5, 170),
+                                                    Vector2(195.5, 0)])],
+                                                
+                    'SmallLR': [PackedVector2Array([Vector2(0, 0),
+                                                    Vector2(200, 0),
+                                                    Vector2(200, 100),
+                                                    Vector2(195, 100),
+                                                    Vector2(195, 5),
+                                                    Vector2(0, 5)])],
+                                                
+                    'SmallLL': [PackedVector2Array([Vector2(0, 0),
+                                                    Vector2(200, 0),
+                                                    Vector2(200, 5),
+                                                    Vector2(5, 5),
+                                                    Vector2(5, 100),
+                                                    Vector2(0, 100)])],
+                                                
+                    'newRuins': [PackedVector2Array([Vector2(0, 0),
+                                                     Vector2(0, 76.2),
+                                                     Vector2(5, 76.2),
+                                                     Vector2(5, 5),
+                                                     Vector2(76.2, 5),
+                                                     Vector2(76.2, 0)]),
+                                  PackedVector2Array([Vector2(152.4, 76.2),
+                                                      Vector2(228.6, 76.2),
+                                                      Vector2(228.6, 0),
+                                                      Vector2(223.6, 0),
+                                                      Vector2(223.6, 71.2),
+                                                      Vector2(152.4, 71.2)])]}
+ 
 var layouts = [[['LargeL', [120, 667.684375062506], 6.02637165237177],
                 ['SmallLR', [420, 541.25984252], 0],
                 ['SmallLL', [656.220472441, 620], 1.5708],
@@ -47,31 +90,36 @@ var layouts = [[['LargeL', [120, 667.684375062506], 6.02637165237177],
                 ['MediumL', [120, 553.228346457],  (2 * PI) - PI/2],
                 ['newRuins', [380, 280], 0.729728]]]
 
+
+
 var deployments = [PackedVector2Array([Vector2(10, 18),
                                        Vector2(18, 38),
                                        Vector2(30, 22),
                                        Vector2(42, 6),
                                        Vector2(50, 26)])]
 
-func moveFeature(feature: Array) -> PackedVector2Array:
+func moveFeature(feature: Array, terrainDict: Dictionary):
     '''
     Moves the terraain feature to a given position then rotates it
     around the iniital point. check the terrainFeatures dictionary to see
     which point the inital one it
     '''
-    var points = terrainFeatures[feature[0]]
+    var features = terrainDict[feature[0]]
     var offset = feature[1]
     var theta = feature[2]
-    var newPoints = PackedVector2Array()
-    
-    for point in points:
-        var x1 = globals.mmToPixels(point[0])
-        var y1 = globals.mmToPixels(point[1])
-        
-        var x2 = (x1 * cos(theta) - y1 * sin(theta)) + offset[0]
-        var y2 = (x1 * sin(theta) + y1 * cos(theta)) + offset[1]
-        
-        newPoints.append(Vector2(x2, y2))
+    var newPoints = []
+     
+    for feat in features:
+        var newShape = []
+        for point in feat:
+            var x1 = globals.mmToPixels(point[0])
+            var y1 = globals.mmToPixels(point[1])
+            
+            var x2 = (x1 * cos(theta) - y1 * sin(theta)) + offset[0]
+            var y2 = (x1 * sin(theta) + y1 * cos(theta)) + offset[1]
+            
+            newShape.append(Vector2(x2, y2))
+        newPoints.append(newShape)
     return newPoints
  
 func mirrorFeature(points: PackedVector2Array):
@@ -88,18 +136,36 @@ func mirrorFeature(points: PackedVector2Array):
    
 func spawnTerrain(layout: Array) -> void:
     for feature in layout:
-        var terrain = footprint.instantiate()
-        $ScrollContainer/Control/Panel/Terrain.add_child(terrain)
-        terrain.polygon = moveFeature(feature)
-        terrain.color = Color.REBECCA_PURPLE
-        terrain.setCollider()
-        #flip the terain and spawn
-        var mirrorTerrain = footprint.instantiate()
-        $ScrollContainer/Control/Panel/Terrain.add_child(mirrorTerrain)
-        mirrorTerrain.polygon = mirrorFeature(terrain.polygon)
-        mirrorTerrain.color = Color.REBECCA_PURPLE
-        mirrorTerrain.setCollider()
-
+        var newFeatures = moveFeature(feature, terrainFeatures)
+        for newFeature in newFeatures:
+            #spawn the footprints
+            var terrain = footprint.instantiate()
+            $ScrollContainer/Control/Panel/Terrain.add_child(terrain)
+            terrain.polygon = newFeature
+            terrain.color = Color.REBECCA_PURPLE
+            terrain.setCollider()
+            #flip the terain and spawn
+            var mirrorTerrain = footprint.instantiate()
+            $ScrollContainer/Control/Panel/Terrain.add_child(mirrorTerrain)
+            mirrorTerrain.polygon = mirrorFeature(terrain.polygon)
+            mirrorTerrain.color = Color.REBECCA_PURPLE
+            mirrorTerrain.setCollider()
+        
+        #spawn the walls
+        var newWalls = moveFeature(feature, wallsFeatures)
+        for newWall in newWalls:
+            var terrain = footprint.instantiate()
+            $ScrollContainer/Control/Panel/Terrain.add_child(terrain)
+            terrain.polygon = newWall
+            terrain.color = Color.BLACK
+            terrain.setCollider([1, 2])
+            #flip the terain and spawn
+            var mirrorTerrain = footprint.instantiate()
+            $ScrollContainer/Control/Panel/Terrain.add_child(mirrorTerrain)
+            mirrorTerrain.polygon = mirrorFeature(terrain.polygon)
+            mirrorTerrain.color = Color.BLACK
+            mirrorTerrain.setCollider([1, 2])
+        
 #code for deployments
 func spawnDeployment(objectives: Array) -> void:
     for markerPos in objectives[0]:
