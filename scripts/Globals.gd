@@ -99,10 +99,15 @@ func json_to_dataframe(json):
         else:
             idnumber = i-2+Units.GetColumns('id').max()
         datasheetName = roster[i]['name']
+        print("Datasheet: ", datasheetName)
         
+        #the unit is a single character model, we can addModels from here
+        print('Audit 01: Datasheet is a single model')
         if roster[i]['type'] == 'model':
             for profile in roster[i]['profiles']:
                 if profile['typeName'] == 'Unit':
+                    print("\t Audit 02: Found and saved model characteristics for ", datasheetName)
+                    
                     newRow = addModels(idnumber, 
                                        datasheetName, 
                                        datasheetName, 
@@ -111,48 +116,63 @@ func json_to_dataframe(json):
                     unitRows.append(newRow)
         
         var unitChars = 'null'
+        var objectProfiles = 0
+        print('\tAudit 03: Checking object profiles for characteristic/weapon Data')
         for profile in roster[i]['profiles']:
+            objectProfiles = objectProfiles + 1 
+            print('\t Audit 04: Profile %s of the datasheet is a %s' % [objectProfiles, profile['typeName']])
             if profile['typeName'] == 'Unit':
                 unitChars = profile
+                var profileSelecions = 0
                 for selection in roster[i]['selections']:
-                        if selection['type'] == 'model':
-                            newRow = addModels(idnumber, 
-                                               datasheetName, 
-                                               selection['name'], 
-                                               unitChars, 
-                                               selection['number'])
-                            unitRows.append(newRow)
-                                                                                 
-                            for selection2 in selection['selections']:
-                                if selection2['type'] == 'upgrade':
-                                    weaponProfile = selection2['profiles'][0]
-                                    newRow = addWeapons(idnumber, 
-                                                        datasheetName, 
-                                                        selection2['name'], 
-                                                        weaponProfile, 
-                                                        selection2['number'])
-                                    if len(newRow) == 11:
-                                        weaponRows.append(newRow)
-                        else:
-                            if 'profiles' in selection.keys():
-                                for profile2 in selection['profiles']:
-                                    newRow = addWeapons(idnumber, 
-                                                        datasheetName, 
-                                                        profile2['name'], 
-                                                        profile2, 
-                                                        selection['number'])
-                                    if len(newRow) == 11:
-                                        weaponRows.append(newRow)
-                            elif 'selections' in selection.keys():
-                                for profile2 in selection['selections']:
-                                    weaponProfile = profile2['profiles'][0]
-                                    newRow = addWeapons(idnumber, 
-                                                        datasheetName, 
-                                                        profile2['name'], 
-                                                        weaponProfile, 
-                                                        profile2['number'])
-                                    if len(newRow) == 11:
-                                        weaponRows.append(newRow)
+                    profileSelecions = profileSelecions + 1
+                    var selectionType = selection['type']
+                    print('\t\tAudit 05: Unit object selection %s is %s' % [profileSelecions, selectionType])
+                    if selectionType == 'model':
+                        print("Found data for model: ", selection['name'])
+                        newRow = addModels(idnumber, 
+                                            datasheetName, 
+                                            selection['name'], 
+                                            unitChars, 
+                                            selection['number'])
+                        unitRows.append(newRow)
+                                                                                
+                        for selection2 in selection['selections']:
+                            print(selection2['name'])
+                            if selection2['type'] == 'upgrade':
+                                weaponProfile = selection2['profiles'][0]
+                                newRow = addWeapons(idnumber, 
+                                                    datasheetName, 
+                                                    selection2['name'], 
+                                                    weaponProfile, 
+                                                    selection2['number'])
+                                if len(newRow) == 11:
+                                    weaponRows.append(newRow)
+                    else:
+                        print("\t\t\tAudit 06: Selection is not a model, looking for data in su categories")
+                        if 'profiles' in selection.keys():
+                            print("\t\t\tAudit 07: Selection has profiles, attempting to get weapon data for:")
+                            for profile2 in selection['profiles']:
+                                print("\t\t\t\t", profile2['name'])
+                                newRow = addWeapons(idnumber, 
+                                                    datasheetName, 
+                                                    profile2['name'], 
+                                                    profile2, 
+                                                    selection['number'])
+                                if len(newRow) == 11:
+                                    weaponRows.append(newRow)
+                        elif 'selections' in selection.keys():
+                            print("\t\t\tAudit 08: Selection has selections, getting weapon data from")
+                            for profile2 in selection['selections']:
+                                weaponProfile = profile2['profiles'][0]
+                                print("\t\t\t\t", profile2['name'])
+                                newRow = addWeapons(idnumber, 
+                                                    datasheetName, 
+                                                    profile2['name'], 
+                                                    weaponProfile, 
+                                                    profile2['number'])
+                                if len(newRow) == 11:
+                                    weaponRows.append(newRow)
                                         
         if unitChars is String:
             for selection in roster[i]['selections']:
@@ -187,6 +207,8 @@ func json_to_dataframe(json):
                                    unitChars, 
                                    selection['number'])
                 unitRows.append(newRow)
+        
+        print('--------')
         
     unitRows = DataFrame.New(unitRows, unitCols)
     weaponRows = DataFrame.New(weaponRows, weaponCols)
