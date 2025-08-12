@@ -19,9 +19,11 @@ var unitCols = ['id',
                 'Ld',
                 'OC',
                 'Count',
+                'Abilities',
+                'WeaponDict',
                 'Base Size']
+                
 var weaponCols = ['id',
-                  'Datasheet',
                   'Name',
                   'Range',
                   'A',
@@ -32,15 +34,23 @@ var weaponCols = ['id',
                   'Abilities',
                   'Count']
 
-var exampleUnits = [[1, 'Void Brothers', 'Void Brother', '6', 4, 3, 2, 7, 2, 4, 32],
-                    [1, 'Void Brothers', 'Void Brother-Sargent', '6', 4, 3, 2, 7, 2, 1, 32],
-                    [2, 'Astral Warriors', 'Warrior', 6, 3, 5, 1, 7, 2, 10, 25]]
+#some example data to preload when launching fo the first time
+var exampleUnits = [[1, 'Void Brothers', 'Void Brother', '6', 4, 3, 2, 7, 2, 4, ["-"], 
+                    {1: 1, 3: 1}, 32],
+                    [1, 'Void Brothers', 'Void Brother-Sargent', '6', 4, 3, 2, 7, 2, 1, ["-"], 
+                    {2: 1, 3: 1}, 32],
+                    [2, 'Astral Warriors', 'Warrior', 6, 3, 5, 1, 7, 2, 10, ["-"], 
+                    {4: 1, 5: 1}, 25],
+                    [3, 'Visability Test', 'Warrior', 28, 3, 5, 1, 7, 2, 1, ["-"], 
+                    {4: 1, 5: 1}, 200],
+                    [4, 'Visability Test 2', 'Warrior', 28, 3, 5, 1, 7, 2, 1, ["-"], 
+                    {4: 1, 5: 1}, 60]]
                 
-var exampleWeapons = [[1, 'Void Brothers', 'Grenade Rifle', '24"', 2, '3+', 4, 1, 1, ["-"], 4],
-                      [1, 'Void Brothers', 'Plasma Mortar', '24"', 'D6', '3+', 6, 0, 1, ["-"], 1],
-                      [1, 'Void Brothers', 'Close Combat Weapon', 'Melee', '2', '3+', 4, 0, 1, ["-"], 1],
-                      [2, 'Astral Warriors', 'Slug Thrower', '24"', 2, '4+', 3, 0, 1, ["-"], 10],
-                      [2, 'Astral Warriors', 'Close Combat Weapon', 'Melee', 1, '4+', 3, 0, 1, ["-"], 10]]
+var exampleWeapons = [[1, 'Grenade Rifle', '24"', 2, '3+', 4, 1, 1, ["-"], 4],
+                      [2, 'Plasma Mortar', '24"', 'D6', '3+', 6, 0, 1, ["-"], 1],
+                      [3, 'Close Combat Weapon', 'Melee', '2', '3+', 4, 0, 1, ["-"], 1],
+                      [4, 'Slug Thrower', '24"', 2, '4+', 3, 0, 1, ["-"], 10],
+                      [5, 'Close Combat Weapon', 'Melee', 1, '4+', 3, 0, 1, ["-"], 10]]
 
 var Units = DataFrame.New(exampleUnits, unitCols)
 var Weapons = DataFrame.New(exampleWeapons, weaponCols)
@@ -117,10 +127,10 @@ func json_to_dataframe(json):
         
         var unitChars = 'null'
         var objectProfiles = 0
-        print('\tAudit 03: Checking object profiles for characteristic/weapon Data')
+        print('Audit 03: Checking object profiles for characteristic/weapon Data')
         for profile in roster[i]['profiles']:
             objectProfiles = objectProfiles + 1 
-            print('\t Audit 04: Profile %s of the datasheet is a %s' % [objectProfiles, profile['typeName']])
+            print('\tAudit 04: Profile %s of the datasheet is a %s' % [objectProfiles, profile['typeName']])
             if profile['typeName'] == 'Unit':
                 unitChars = profile
                 var profileSelecions = 0
@@ -149,7 +159,7 @@ func json_to_dataframe(json):
                                 if len(newRow) == 11:
                                     weaponRows.append(newRow)
                     else:
-                        print("\t\t\tAudit 06: Selection is not a model, looking for data in su categories")
+                        print("\t\t\tAudit 06: Selection is not a model, looking for data in sub categories")
                         if 'profiles' in selection.keys():
                             print("\t\t\tAudit 07: Selection has profiles, attempting to get weapon data for:")
                             for profile2 in selection['profiles']:
@@ -162,7 +172,7 @@ func json_to_dataframe(json):
                                 if len(newRow) == 11:
                                     weaponRows.append(newRow)
                         elif 'selections' in selection.keys():
-                            print("\t\t\tAudit 08: Selection has selections, getting weapon data from")
+                            print("\t\t\tAudit 08: Selection has selections, getting weapon data from:")
                             for profile2 in selection['selections']:
                                 weaponProfile = profile2['profiles'][0]
                                 print("\t\t\t\t", profile2['name'])
@@ -175,9 +185,11 @@ func json_to_dataframe(json):
                                     weaponRows.append(newRow)
                                         
         if unitChars is String:
+            print("Audit 09: Have not found characteristic data for this datasheet")
             for selection in roster[i]['selections']:
-                
+                print("\tAudit 10: Checking Selections for Weapons")
                 for weapon in selection['selections']:
+                    print("\t\t", weapon['name'])
                     if 'profiles' in weapon.keys():
                         for profile in weapon['profiles']:
                             newRow = addWeapons(idnumber, 
@@ -198,15 +210,17 @@ func json_to_dataframe(json):
                             if len(newRow) == 11:
                                 weaponRows.append(newRow)
                     
+                print("\tAudit 11: Checking %s for Unit Characteristics" % selection['name'])
                 for profile in selection['profiles']:
                     if profile['typeName'] == 'Unit':
+                        print("\t\tFound Characterisitics")
                         unitChars = profile
-                newRow = addModels(idnumber, 
-                                   datasheetName, 
-                                   selection['name'], 
-                                   unitChars, 
-                                   selection['number'])
-                unitRows.append(newRow)
+                    newRow = addModels(idnumber, 
+                                        datasheetName, 
+                                        selection['name'], 
+                                        unitChars, 
+                                        selection['number'])
+                    unitRows.append(newRow)
         
         print('--------')
         

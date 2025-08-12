@@ -19,6 +19,11 @@ config/features=PackedStringArray("4.4", "Forward Plus")
 globals="*res://scripts/Globals.gd"
 Tooltip="*res://Scenes/tooltip.tscn"
 
+[debug]
+
+shapes/collision/shape_color=Color(0, 1, 0.701961, 1)
+shapes/collision/contact_color=Color(1, 0.2, 0.101961, 1)
+
 [display]
 
 window/size/viewport_width=1600

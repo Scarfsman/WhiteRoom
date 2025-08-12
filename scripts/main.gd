@@ -31,6 +31,12 @@ func _ready() -> void:
 
 #display data
 func display_data(id = 0) -> void:
+    """
+    Shows the weapon and unit tables on the load data page based on the filtered
+    for the datasheet id passed to the function. if 0, will show everything
+    """
+    
+    #initialise variables
     var unitData
     var weaponData
     var path
@@ -40,10 +46,23 @@ func display_data(id = 0) -> void:
         unitData = globals.Units
         weaponData = globals.Weapons
     else:
+        #filter all the unit data for the specific datasheet
         unitData = globals.Units
-        unitData = unitData.filter('id', id)
+        unitData = unitData.filter('id', [id])
+        #filter the weapon data based on what the models are equipped with
         weaponData = globals.Weapons
-        weaponData = weaponData.filter('id', id)
+        var weaponsToGet = {}
+        var modelCounts = unitData.GetColumns("Count")
+        var weaponDicts = unitData.GetColumns("WeaponDict")
+        for i in range(len(modelCounts)):
+            for weaponID in weaponDicts[i].keys():
+                if weaponID not in weaponsToGet.keys():
+                    print(weaponDicts[i][weaponID])
+                    weaponsToGet[weaponID] = weaponDicts[i][weaponID] * modelCounts[i]
+                else:
+                    weaponsToGet[weaponID] = weaponsToGet[weaponID] + weaponDicts[i][weaponID] * modelCounts[i]
+        print(weaponsToGet.keys())
+        weaponData = weaponData.filter('id', weaponsToGet.keys())
     path = 'TabContainer/LoadData/Background'
     
     unitData = unitData.prettify()

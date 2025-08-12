@@ -10,6 +10,7 @@ func checkNeighbours(model, visited: Array):
             visited.append(i)
             checkNeighbours(i, visited)
     
+
 func _draw() -> void:
     var reqCount: bool = true
     var singleModel: bool = false
@@ -47,7 +48,8 @@ func _draw() -> void:
                 i.get_node('Sprite2D').modulate = Color(1,0,0)
                 
 func _process(_float) -> void:
-    queue_redraw()
+    var thing = 0
+    #queue_redraw()
         
                 
         

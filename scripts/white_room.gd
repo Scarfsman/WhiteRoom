@@ -11,7 +11,7 @@ var currScale: float = 1
 #https://docs.google.com/document/d/1WV085gGnMPOF-zprcri-9HDW5BWBE34HGc9ndIGRJHM/edit?tab=t.0
 
 #TODO set up a dictionary containing the terain features from the UKTC terrain pack
-#write a script to span them in                
+#write a script to spawn them in                
 
 var terrainFeatures = {'LargeL': [PackedVector2Array([Vector2(0, 0),
                                                      Vector2(0, 200),
@@ -135,6 +135,7 @@ func mirrorFeature(points: PackedVector2Array):
     return newPoints
    
 func spawnTerrain(layout: Array) -> void:
+    """
     for feature in layout:
         var newFeatures = moveFeature(feature, terrainFeatures)
         for newFeature in newFeatures:
@@ -165,6 +166,20 @@ func spawnTerrain(layout: Array) -> void:
             mirrorTerrain.polygon = mirrorFeature(terrain.polygon)
             mirrorTerrain.color = Color.BLACK
             mirrorTerrain.setCollider([1, 2])
+    """
+
+    var walls = [PackedVector2Array([Vector2(600, 442),Vector2(600, 640),Vector2(602, 640),Vector2(602, 442)]),
+                 PackedVector2Array([Vector2(602, 440),Vector2(602, 442),Vector2(798, 442),Vector2(798, 440)]),
+                 PackedVector2Array([Vector2(600, 640),Vector2(600, 642),Vector2(802, 642),Vector2(802, 640)]),
+                 PackedVector2Array([Vector2(802, 440),Vector2(802, 640),Vector2(800, 640),Vector2(800, 440)])]
+    for feat in walls:
+        var terrain = footprint.instantiate() 
+        $ScrollContainer/Control/Panel/Terrain.add_child(terrain)
+        terrain.polygon = feat
+        terrain.color = Color.REBECCA_PURPLE
+        terrain.setCollider(5)
+    
+
         
 #code for deployments
 func spawnDeployment(objectives: Array) -> void:
@@ -219,13 +234,13 @@ func _draw():
 func _on_load_pressed() -> void:
     var models = []
     #filter the units data frame for the unit based on the drop down box
-    var unitData = globals.Units.filter('id', $UnitSelection.get_selected_id())
+    var unitData = globals.Units.filter('id', [$UnitSelection.get_selected_id()])
     #get the model data for the tooltips
-    var modelData = globals.Units.filter('id', $UnitSelection.get_selected_id())
+    var modelData = globals.Units.filter('id', [$UnitSelection.get_selected_id()])
     unitData = unitData.GetColumns(['Count', 'Base Size', 'M']).data
     #for each model type, get the information required to spawn the model,
     #then save the information for the tool tips. 
-    for n in range(len(unitData)):
+    for n in range(len(unitData)) :
         for i in range(unitData[n][0]):
             var newModel = [unitData[n][1], unitData[n][2]]
             var data = [modelData.data[n][1]]

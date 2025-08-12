@@ -20,6 +20,10 @@ static func New(d: Array, c = false, i = []) -> DataFrame:
 
 # getters
 func GetColumns(cols):
+    """
+    get the passed columns from the dataframe as a list. 
+    returns a new dataframe object if multiple columns are specified
+    """
     #case where passed argument is a string, in which case, get single column
     if cols is String:
         assert(cols in columns)
@@ -28,6 +32,7 @@ func GetColumns(cols):
         for row in data:
             result.append(row[x1])
         return result
+    #if passed argument is an array, get multiple columns
     elif cols is Array:
         var inds = []
         var newCols = []
@@ -67,15 +72,15 @@ func Append(newDataFrame: DataFrame) -> void:
         data.append(row)
     index = range(len(data))
 
-func filter(colName: String, arg, exclude = false) -> DataFrame:
+func filter(colName: String, arg: Array, exclude = false) -> DataFrame:
     var filterData = []
     var filterColumn = GetColumns(colName)
     var newIndex = []
     for i in len(filterColumn):
-        if (filterColumn[i] == arg) and (exclude == false):
+        if (filterColumn[i] in arg) and (exclude == false):
             filterData.append(data[i])
             newIndex.append(index[i])
-        elif (filterColumn[i] != arg) and (exclude == true):
+        elif (filterColumn[i] not in arg) and (exclude == true):
             filterData.append(data[i])
             newIndex.append(index[i])
     return DataFrame.New(filterData, columns, newIndex)
@@ -128,6 +133,7 @@ func _sort_by(row1, row2, Ix, desc) -> bool:
     return result
 
 func SortBy(colName: String, desc: bool = false):
+    #sorts the dataframe by a specific column
     assert(colName in columns)
     
     var Ix = columns.find(colName)
@@ -160,6 +166,7 @@ func CollectWeapons():
     return DataFrame.New(result, columns)
         
 func prettify():
+    #makes the dataframe look nicer
     var newData = data.duplicate(true)
     var newCols = columns.duplicate()
     var maxLength = 0

@@ -59,10 +59,10 @@ func displayGraph():
         
 func displayAttacker(id):
     var weaponData = globals.Weapons
-    weaponData = weaponData.filter('id', id)
+    weaponData = weaponData.filter('id', [id])
     #check wether fighting at range on in melee
     var range: bool = bool($AttackerWeaponType.selected)
-    weaponData = weaponData.filter('Range', 'Melee', range)
+    weaponData = weaponData.filter('Range', ['Melee'], range)
     
     attackerData = weaponData
     if attackerData.Size() >= 1:
@@ -74,7 +74,7 @@ func displayAttacker(id):
 func displayDefender(id):
     print(id)
     var unitData = globals.Units
-    unitData = unitData.filter('id', id)
+    unitData = unitData.filter('id', [id])
     
     defenderData = unitData
     print(unitData)
