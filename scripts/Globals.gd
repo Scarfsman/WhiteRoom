@@ -37,7 +37,7 @@ var weaponCols = ['id',
 #some example data to preload when launching fo the first time
 var exampleUnits = [[1, 'Void Brothers', 'Void Brother', '6', 4, 3, 2, 7, 2, 4, ["-"], 
                     {1: 1, 3: 1}, 32],
-                    [1, 'Void Brothers', 'Void Brother-Sargent', '6', 4, 3, 2, 7, 2, 1, ["-"], 
+                    [1, 'Void Brothers', 'Void Brother-Sargent', '8', 4, 3, 2, 7, 2, 1, ["-"], 
                     {2: 1, 3: 1}, 32],
                     [2, 'Astral Warriors', 'Warrior', 6, 3, 5, 1, 7, 2, 10, ["-"], 
                     {4: 1, 5: 1}, 25],
@@ -46,11 +46,11 @@ var exampleUnits = [[1, 'Void Brothers', 'Void Brother', '6', 4, 3, 2, 7, 2, 4, 
                     [4, 'Visability Test 2', 'Warrior', 28, 3, 5, 1, 7, 2, 1, ["-"], 
                     {4: 1, 5: 1}, 60]]
                 
-var exampleWeapons = [[1, 'Grenade Rifle', '24"', 2, '3+', 4, 1, 1, ["-"], 4],
-                      [2, 'Plasma Mortar', '24"', 'D6', '3+', 6, 0, 1, ["-"], 1],
-                      [3, 'Close Combat Weapon', 'Melee', '2', '3+', 4, 0, 1, ["-"], 1],
-                      [4, 'Slug Thrower', '24"', 2, '4+', 3, 0, 1, ["-"], 10],
-                      [5, 'Close Combat Weapon', 'Melee', 1, '4+', 3, 0, 1, ["-"], 10]]
+var exampleWeapons = [[1, 'Grenade Rifle', 24, 2, '3+', 4, 1, 1, ["-"], 4],
+                      [2, 'Plasma Mortar', 36, 'D6', '3+', 6, 0, 1, ["-"], 1],
+                      [3, 'Close Combat Weapon', 0, '2', '3+', 4, 0, 1, ["-"], 1],
+                      [4, 'Slug Thrower', 24, 2, '4+', 3, 0, 1, ["-"], 10],
+                      [5, 'Close Combat Weapon', 0, 1, '4+', 3, 0, 1, ["-"], 10]]
 
 var Units = DataFrame.New(exampleUnits, unitCols)
 var Weapons = DataFrame.New(exampleWeapons, weaponCols)

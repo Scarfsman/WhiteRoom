@@ -3,13 +3,14 @@ extends Control
 var movement: bool = false
 var shooting: bool = false
 var charge: bool = false
+var team: bool
+var selectedTeam: bool
 
 func checkNeighbours(model, visited: Array):
     for i in model.neighbours:
         if i not in visited:
             visited.append(i)
             checkNeighbours(i, visited)
-    
 
 func _draw() -> void:
     var reqCount: bool = true
@@ -40,16 +41,26 @@ func _draw() -> void:
         checkNeighbours(allModels[0], currCheck)
         var inRange: bool = len(currCheck) == len(allModels)     
         
-        if (inRange and reqCount) or singleModel:
+        if team:
             for i in allModels:
-                i.get_node('Sprite2D').modulate = Color(0,1,0)
+                i.get_node('Sprite2D').modulate = Color.GHOST_WHITE
         else:
             for i in allModels:
-                i.get_node('Sprite2D').modulate = Color(1,0,0)
+                i.get_node('Sprite2D').modulate = Color.DARK_SLATE_GRAY
+        
+    
+        if (inRange and reqCount) or singleModel:
+            for i in allModels:
+                i.get_node('Boarder').modulate = Color.LIME_GREEN
+        else:
+            for i in allModels:
+                i.get_node('Boarder').modulate = Color.ORANGE_RED
+        
                 
 func _process(_float) -> void:
     var thing = 0
-    #queue_redraw()
+    queue_redraw()
         
-                
+func update_selectedTeam(index: bool) -> void:
+    selectedTeam = index
         

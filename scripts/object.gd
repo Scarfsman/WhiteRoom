@@ -20,14 +20,16 @@ var startPos: Vector2 = Vector2(0, 0)
 var temp1: Vector2
 var temp2: Vector2
 
+#movement variables
 var pointsTest: PackedVector2Array
 var targetTest: PackedVector2Array
+var targetPos: Vector2
 var FOV: PackedVector2Array
 
 #data for tooltips
 var data: Array
-
 var circle: Array
+var team: int
 
 #debug options
 var debugRays: bool = false
@@ -35,6 +37,7 @@ var debugRays: bool = false
 @onready var space_state = get_world_2d().direct_space_state
 
 func _ready():
+    
     maxDist = globals.inchesToPixels(maxDist) + radius
     offsetParent = get_parent().get_parent().global_position
     #limit the units movemnt to the panel area
@@ -58,6 +61,10 @@ func _draw() -> void:
             draw_circle(point, 5, Color.WHITE)
             
     var circleColour = Color(0.941176, 0.972549, 1, 0.3)
+    
+    if get_parent().movement and dragging:
+        draw_line(startPos - global_position, targetPos - global_position, Color.GRAY)
+
     draw_polygon(FOV, [circleColour])
                 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -92,7 +99,7 @@ func movement():
     if dragging:
         #get rays from the root objects on the edge of the base
 
-        var targetPos = get_global_mouse_position() - offsetPos
+        targetPos = get_global_mouse_position() - offsetPos
         #make sure the object isn't being moved outside the bounds of the 
         #gameboard
         targetPos[0] = float(max(leftBound, min(rightBound, targetPos[0])))
@@ -121,30 +128,59 @@ func _on_button_mouse_exited() -> void:
     Tooltip.HideModelPopup()
     
 func _physics_process(delta: float) -> void:
-    FOV = PackedVector2Array()
-    pointsTest = PackedVector2Array()
-    targetTest = PackedVector2Array()
-    var space_state = get_world_2d().direct_space_state
-    var angle = FOV_incrament
-    while angle <= 2 * PI:
-        var targetPosition = Vector2(0, maxDist).rotated(angle) + global_position
-        var query = PhysicsRayQueryParameters2D.create(global_position, targetPosition)
-        var result = space_state.intersect_ray(query)
-        if result:
-            if result.collider.get_collision_layer() == 5:
-                var newQuery = PhysicsRayQueryParameters2D.create(result.position, targetPosition)
-                newQuery.exclude = [result.collider.get_rid()]
-                var newResult = space_state.intersect_ray(newQuery)
-                if newResult:
-                    FOV.append(newResult.position - global_position)
-                    pointsTest.append(newResult.position - global_position)
-                else:
-                    FOV.append(targetPosition - global_position)
-                    targetTest.append(targetPosition - global_position)
-            else:
-                FOV.append(result.position - global_position)
-                pointsTest.append(result.position - global_position)
-        else:
-            FOV.append(targetPosition - global_position)
-            targetTest.append(targetPosition - global_position)
-        angle += FOV_incrament
+    var shooting = get_parent().shooting
+    var team = get_parent().team == get_parent().selectedTeam
+    if shooting and team:
+        """
+        #get the area the model can currently see
+        FOV = PackedVector2Array()
+        pointsTest = PackedVector2Array()
+        targetTest = PackedVector2Array()
+        #get space state for raycasts
+        var space_state = get_world_2d().direct_space_state
+        var angle = FOV_incrament
+        #get the equipped weapons for this model from the global data
+        for i in data[2][11].keys():
+            #get the range of the equipped weapon
+            var equipedWeapon = globals.Weapons.filter('id', [i])
+            var weaponRange = equipedWeapon.GetColumns('Range')[0]
+            if weaponRange > 0:
+                #if it is not a melle weapon, i.e. range 0, then draw what the unit can see
+                weaponRange = globals.inchesToPixels(weaponRange) + radius
+                while angle <= 2 * PI:
+                    #for the angel incrament, fire a ray cast at that angle with length of weapon range
+                    var targetPosition = Vector2(0, weaponRange).rotated(angle) + global_position
+                    var query = PhysicsRayQueryParameters2D.create(global_position, targetPosition)
+                    var result = space_state.intersect_ray(query)
+                    if result:
+                        #we hit something
+                        if result.collider.get_collision_layer() == 5:
+                            #collision layer 5 is for ruin footprints, we can see into these but not through
+                            #create a new query from where the ray hit to the orinigal target, adding
+                            #the first collider as an exception
+                            var newQuery = PhysicsRayQueryParameters2D.create(result.position, targetPosition)
+                            newQuery.exclude = [result.collider.get_rid()]
+                            var newResult = space_state.intersect_ray(newQuery)
+                            if newResult:
+                                FOV.append(newResult.position - global_position)
+                                pointsTest.append(newResult.position - global_position)
+                            else:
+                                FOV.append(targetPosition - global_position)
+                                targetTest.append(targetPosition - global_position)
+                        else:
+                            FOV.append(result.position - global_position)
+                            pointsTest.append(result.position - global_position)
+                    else:
+                        FOV.append(targetPosition - global_position)
+                        targetTest.append(targetPosition - global_position)
+                    angle += FOV_incrament
+        """
+        var space_state = get_world_2d().direct_space_state
+        var angle = FOV_incrament
+        
+    else:
+        FOV = PackedVector2Array()
+
+    
+    
+        

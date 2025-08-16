@@ -8,6 +8,12 @@ extends TabBar
 var hovering: bool = false                             
 var currScale: float = 1
 
+var units = [[], []]
+
+#variables for selecting from menus
+var currTeamSelected: bool
+signal currTeamSelected_changed(team: bool)
+
 #https://docs.google.com/document/d/1WV085gGnMPOF-zprcri-9HDW5BWBE34HGc9ndIGRJHM/edit?tab=t.0
 
 #TODO set up a dictionary containing the terain features from the UKTC terrain pack
@@ -89,8 +95,6 @@ var layouts = [[['LargeL', [120, 667.684375062506], 6.02637165237177],
                 ['MediumL', [820, 750], (2 * PI) - PI/5.2],
                 ['MediumL', [120, 553.228346457],  (2 * PI) - PI/2],
                 ['newRuins', [380, 280], 0.729728]]]
-
-
 
 var deployments = [PackedVector2Array([Vector2(10, 18),
                                        Vector2(18, 38),
@@ -178,8 +182,6 @@ func spawnTerrain(layout: Array) -> void:
         terrain.polygon = feat
         terrain.color = Color.REBECCA_PURPLE
         terrain.setCollider(5)
-    
-
         
 #code for deployments
 func spawnDeployment(objectives: Array) -> void:
@@ -206,7 +208,7 @@ func generate_circle_polygon(radius: float, position: Vector2) -> PackedVector2A
        
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-    pass
+    update_Target_Unit_select(0)
          
 func _process(delta: float) -> void:
     var thing = $PhaseSelect  
@@ -245,14 +247,18 @@ func _on_load_pressed() -> void:
             var newModel = [unitData[n][1], unitData[n][2]]
             var data = [modelData.data[n][1]]
             var temp = ''
+            #create tooltips string
             for col in range(2, 9):
                 var NewString = modelData.columns[col] + ': ' + str(modelData.data[n][col]) +'\n'
                 temp += NewString
             data.append(temp)
+            data.append(modelData.data[n])
             newModel.append(data)
             models.append(newModel)
-                
+    
     var newUnit = unit.instantiate()
+    newUnit.selectedTeam = currTeamSelected
+    currTeamSelected_changed.connect(newUnit.update_selectedTeam)
     #set the model to the correct phase
     var index = $PhaseSelect.selected
     if index == 0:
@@ -267,7 +273,9 @@ func _on_load_pressed() -> void:
         newUnit.movement = false
         newUnit.shooting = false
         newUnit.charge = true
+    newUnit.team = $TeamSelection.get_selected_id()
     #instantiate the models
+    units[int(currTeamSelected)].append(newUnit)
     for indx in range(len(models)):
         #create a new model class object and add it to the unit
         var newModel = model.instantiate()
@@ -288,6 +296,7 @@ func _on_load_pressed() -> void:
         var rowCount: int = 0
         #set the sprite scale accordingly
         newModel.get_node('Sprite2D').scale = Vector2(radius, radius)
+        newModel.get_node('Boarder').scale = Vector2(radius, radius)
         rowCount = indx/5
         #set the tooltip data for the model
         print(models[indx][2])
@@ -301,8 +310,10 @@ func _on_load_pressed() -> void:
     $ScrollContainer/Control/Panel/Units.add_child(newUnit)
 
 func _on_clear_units_pressed() -> void:
-    for child in $ScrollContainer/Control/Panel/Units.get_children():
-        child.queue_free()
+
+    #for child in $ScrollContainer/Control/Panel/Units.get_children():
+        #child.queue_free()
+    $ScrollContainer/Control/Panel/Units.get_children()[-1].queue_free()
 
 func _on_spawn_terrain_pressed() -> void:
     spawnTerrain(layouts[0])
@@ -330,3 +341,23 @@ func _on_phase_select_item_selected(index: int) -> void:
             unit.movement = false
             unit.shooting = false
             unit.charge = true
+    update_Target_Unit_select(index)
+    
+
+func _on_team_selection_item_selected(index: int) -> void:
+    currTeamSelected = index
+    currTeamSelected_changed.emit(currTeamSelected)
+
+func update_Target_Unit_select(phase: int):
+    var targetSelect = get_node('TargetSelect')
+    if phase == 1:
+        targetSelect.visible = true   
+        for unit in units[int(currTeamSelected)]:
+            if unit != null:
+                targetSelect.add_item(unit.get_children()[0].data[0])
+            else:
+                print('HUHHH?')
+    else:
+        get_node('TargetSelect').visible = false
+        targetSelect.clear()
+    

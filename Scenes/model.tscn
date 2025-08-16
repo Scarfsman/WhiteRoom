@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://qt6grn08pcky"]
+[gd_scene load_steps=5 format=3 uid="uid://qt6grn08pcky"]
 
 [ext_resource type="Script" uid="uid://b8qa4sn5gfhce" path="res://scripts/object.gd" id="1_682kq"]
 [ext_resource type="Texture2D" uid="uid://km3tc1sjuafp" path="res://pngwing.com(2).png" id="2_h01ia"]
+[ext_resource type="Texture2D" uid="uid://c0a1phx78qef0" path="res://Sprite Boarder.png" id="3_h01ia"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_c52km"]
 radius = 50.0
@@ -32,6 +33,9 @@ offset_right = -50.0
 offset_bottom = -50.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="Boarder" type="Sprite2D" parent="."]
+texture = ExtResource("3_h01ia")
 
 [node name="Area" type="Polygon2D" parent="."]
 color = Color(0.364706, 0.337255, 0.556863, 0.337255)
